@@ -29,5 +29,5 @@ npm run preview
 ```
 Execute the following command to generate a compiled version of the project, which can be hosted on any static web server (such as NginX) as long as a proxy is provided, or the API calls to radio.garden's API will not recieve a response.
 ```
-npm run dev
+npm run build
 ```
