@@ -10,6 +10,7 @@ import { IoVolumeMedium } from "react-icons/io5";
 import { IoVolumeHigh } from "react-icons/io5";
 import { TbExternalLink } from "react-icons/tb";
 import { AiOutlineLoading3Quarters } from "react-icons/ai";
+import { deselectFavicon, selectFavicon } from "../utilities";
 
 function Player({ info, country, slideRight, slideLeft }) {
 
@@ -33,7 +34,12 @@ function Player({ info, country, slideRight, slideLeft }) {
     audio.src = url
     audio.load()
     setLoading(true)
-    audio.play().then(() => setLoading(false)).catch(() => {
+    audio.play()
+      .then(() => {
+        selectFavicon()
+        setLoading(false)
+      })
+      .catch(() => {
       // al pausar un audio que aún se está cargando, se lanza un error, al no poder pausarlo, pero se detiene la carga,
       // que es lo que queremos, por lo que se puede volver a cargar y reproducir sin problemas, así que se ignora el error
     })
@@ -62,9 +68,11 @@ function Player({ info, country, slideRight, slideLeft }) {
         if (audioRef.current.paused) {
           audioRef.current.play()
           setPlayText('Stop')
+          selectFavicon()
         } else {
           audioRef.current.pause()
           setPlayText('Play')
+          deselectFavicon()
         }
       } else {
         playRadio()

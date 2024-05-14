@@ -17,6 +17,7 @@ import '../styles/Map.css';
 import { IoLayers } from "react-icons/io5";
 import { IoLayersOutline } from "react-icons/io5";
 import faviconSelected from '../assets/favicon-selected.png';
+import { selectFavicon } from "../utilities";
 
 function Map({ setPlaceID, setCountry }) {
 
@@ -168,9 +169,7 @@ function Map({ setPlaceID, setCountry }) {
               });
               if (feature) {
 
-                // change favicon to selected
-                var link = document.querySelector("link[rel~='icon']");
-                link.href = faviconSelected;
+                selectFavicon();
 
                 // set ID of the selected place and its country
                 setPlaceID(feature.get('id'));
