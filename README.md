@@ -1,5 +1,5 @@
 # Connected Sounds
-Connected Sounds is a project that aims at connecting different cultures through the thousands of radio broadcasts trasmitted all around the globe.
+Connected Sounds is a project that aims at building bridges between different cultures through the thousands of radio broadcasts being trasmitted all around the globe.
 ## API
 Powered by [radio.garden](https://radio.garden)'s API and [jonasrmichel](https://github.com/jonasrmichel)'s unofficial [OpenAPI specification](https://jonasrmichel.github.io/radio-garden-openapi/).
 
