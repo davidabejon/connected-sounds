@@ -176,13 +176,19 @@ function Map({ setPlaceID, setCountry }) {
                 setCountry(feature.get('country'));
 
                 if (activeFeature != null) {
+                  let widthPrevious = 25;
+                  let heightPrevious = 20;
+                  if (activeFeature.get('size') > 2) {
+                    widthPrevious = 40;
+                    heightPrevious = 30;
+                  }
                   activeFeature.setStyle(new Style({
                     image: new Icon({
                       opacity: .6,
                       anchorXUnits: 'pixels',
                       anchorYUnits: 'pixels',
-                      width: 25,
-                      height: 20,
+                      width: widthPrevious,
+                      height: heightPrevious,
                       src: notSelectedRadioIcon
                     })
                   }))
