@@ -1,4 +1,4 @@
-![image](https://github.com/davidabejon/connected-sounds/assets/71383097/37f597e2-9eda-4d10-962d-02740fc28492)# Connected Sounds
+# Connected Sounds
 Connected Sounds is a project that aims at connecting different cultures through the thousands of radio broadcasts trasmitted all around the globe.
 ## API
 Powered by [radio.garden](https://radio.garden)'s API and [jonasrmichel](https://github.com/jonasrmichel)'s unofficial [OpenAPI specification](https://jonasrmichel.github.io/radio-garden-openapi/).
