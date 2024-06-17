@@ -12,9 +12,8 @@ import { TbExternalLink } from "react-icons/tb";
 import { AiOutlineLoading3Quarters } from "react-icons/ai";
 import { deselectFavicon, selectFavicon } from "../utilities";
 
-function Player({ info, country, slideRight, slideLeft }) {
+function Player({ info, stations, country, slideRight, slideLeft }) {
 
-  // const [audio, setAudio] = useState(null)
   const audioRef = useRef(new Audio());
   const [muted, setMuted] = useState(false)
   const [mutedText, setMutedText] = useState('Mute')
@@ -27,6 +26,7 @@ function Player({ info, country, slideRight, slideLeft }) {
   const baseUrl = "https://radio.garden/api"
 
   const playRadio = () => {
+    setPlayText('Stop')
     if (info.id == undefined) return
     const audio = audioRef.current
     audio.pause(); // Detener la reproducción actual si hay alguna
@@ -40,9 +40,9 @@ function Player({ info, country, slideRight, slideLeft }) {
         setLoading(false)
       })
       .catch(() => {
-      // al pausar un audio que aún se está cargando, se lanza un error, al no poder pausarlo, pero se detiene la carga,
-      // que es lo que queremos, por lo que se puede volver a cargar y reproducir sin problemas, así que se ignora el error
-    })
+        // al pausar un audio que aún se está cargando, se lanza un error, al no poder pausarlo, pero se detiene la carga,
+        // que es lo que queremos, por lo que se puede volver a cargar y reproducir sin problemas, así que se ignora el error
+      })
   }
 
   useEffect(() => {
@@ -66,7 +66,7 @@ function Player({ info, country, slideRight, slideLeft }) {
     if (!loading) {
       if (audioRef.current != null) {
         if (audioRef.current.paused) {
-          audioRef.current.play()
+          playRadio()
           setPlayText('Stop')
           selectFavicon()
         } else {
@@ -104,20 +104,21 @@ function Player({ info, country, slideRight, slideLeft }) {
           <p className="player-title">{info.title}</p>
           <p className="player-country">{country}</p>
         </div>
-        <a href={"https://" + info.stream} target="_blank"><TbExternalLink size={32} /></a>
+        <p className="fs-5">{stations.map(station => station.page.title).indexOf(info.title) + 1}/{stations.length}</p>
       </div>
 
       <div className="player-controls">
         <div className='player-buttons'>
-          <button className="slide slide-left" onClick={slideLeft}><IoPlayBack size={24} /></button>
+          <button className={stations.length == 1 ? 'slide slide-left slide-disabled' : 'slide slide-left'} onClick={slideLeft}><IoPlayBack size={24} /></button>
           <button className="play" onClick={play}>{loading ? <AiOutlineLoading3Quarters size={32} className="loading-icon" /> : playText == "Play" ? <IoPlay size={32} /> : <IoStop size={32} />}</button>
-          <button className="slide slide-right" onClick={slideRight}><IoPlayForward size={24} /></button>
+          <button className={stations.length == 1 ? 'slide slide-right slide-disabled' : 'slide slide-right'} onClick={slideRight}><IoPlayForward size={24} /></button>
         </div>
 
         <div className="player-volume">
           <input onChange={volumeChange} value={volumeValue * 100} type="range" id="volume" name="volume" min="0" max="100" />
           <button onClick={mute}>{mutedText == "Mute" && volumeValue != 0 ? volumeValue < 0.3 ? <IoVolumeLow size={32} /> : volumeValue < 0.6 ? <IoVolumeMedium size={32} /> : <IoVolumeHigh size={32} /> : <IoVolumeOff size={32} />}</button>
         </div>
+        <a href={"https://" + info.stream} target="_blank"><TbExternalLink size={32} /></a>
       </div>
     </div>
   );

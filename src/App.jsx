@@ -70,19 +70,23 @@ function App() {
           }
           setActiveStation(info)
         })
-      
+
       var root = document.querySelector(':root');
       root.style.setProperty('--visibility', 'visible');
       root.style.setProperty('--opacity', '1');
     }
   }, [placeID])
 
-  useEffect(() => {  }, [activeStations])
-
   return (
     <div className='app'>
       <Map setPlaceID={setPlaceID} setCountry={setCountry} />
-      <Player info={activeStation} country={country} slideLeft={slideLeftActiveStation} slideRight={slideRightActiveStation} />
+      <Player
+        info={activeStation}
+        stations={activeStations}
+        country={country}
+        slideLeft={slideLeftActiveStation}
+        slideRight={slideRightActiveStation}
+      />
     </div>
   )
 }

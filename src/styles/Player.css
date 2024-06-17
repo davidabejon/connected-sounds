@@ -95,6 +95,14 @@
     transform: translateX(-3px);
 }
 
+.slide-disabled {
+    cursor: default !important;
+    opacity: .5;
+}
+.slide-disabled:hover::after {
+    opacity: 0;
+}
+
 .play::after {
     content: '';
     position: absolute;
