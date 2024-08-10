@@ -5,7 +5,7 @@ Powered by [radio.garden](https://radio.garden)'s API and [jonasrmichel](https:/
 
 Huge thanks to both for making this project come to life.
 ## Live Demo
-Live Demo available at [http://143.47.48.170:4173/](http://143.47.48.170:4173/) hosted on an Oracle Cloud VM.
+Live Demo available at [http://143.47.48.170:5173/](http://143.47.48.170:5173/) hosted on an Oracle Cloud VM.
 
 Due to radio.garden not supporting CORS requests from all origins, the live demo is hosted using [Vite](https://vitejs.dev/)'s preview server. This is meant to be used to check if your project looks good, rather than using it as a production server. Using it is useful in other to take advantage of Vite's built in Proxy, which is extremely easy to set up and use, and let's us bypass any kind of CORS related restrictions.
 ![Live Demo Screenshot](https://i.imgur.com/UH3S7Oj.jpeg)
