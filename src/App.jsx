@@ -20,6 +20,8 @@ function App() {
     let info = {
       title: activeStations[index].page.title,
       stream: activeStations[index].page.stream,
+      country: activeStations[index].page.country.title,
+      place: activeStations[index].page.place.title,
       id: parseID(activeStations[index].page.url)
     }
     setActiveStation(info)
@@ -34,6 +36,8 @@ function App() {
     let info = {
       title: activeStations[index].page.title,
       stream: activeStations[index].page.stream,
+      country: activeStations[index].page.country.title,
+      place: activeStations[index].page.place.title,
       id: parseID(activeStations[index].page.url)
     }
     setActiveStation(info)
