@@ -1,4 +1,5 @@
-import { useEffect, useRef, useState } from "react";
+import React from 'react';
+import { useEffect, useRef, useState, useMemo } from "react";
 import '../styles/Player.css';
 import { IoPlay } from "react-icons/io5";
 import { IoStop } from "react-icons/io5";
@@ -11,8 +12,18 @@ import { IoVolumeHigh } from "react-icons/io5";
 import { TbExternalLink } from "react-icons/tb";
 import { AiOutlineLoading3Quarters } from "react-icons/ai";
 import { deselectFavicon, selectFavicon } from "../utilities";
+import { message } from 'antd';
+
+const Context = React.createContext({
+  name: 'Default',
+});
 
 function Player({ info, stations, country, slideRight, slideLeft }) {
+
+  const [messageApi, contextHolder] = message.useMessage();
+  const errorMessage = (text) => {
+    messageApi.error(text || 'An unexpected error has occurred', 5);
+  };
 
   const audioRef = useRef(new Audio());
   const [muted, setMuted] = useState(false)
@@ -22,10 +33,12 @@ function Player({ info, stations, country, slideRight, slideLeft }) {
   const [playText, setPlayText] = useState('Stop')
 
   const [loading, setLoading] = useState(false)
+  const [failedToLoad, setFailedToLoad] = useState(false)
 
   const baseUrl = "https://radio.garden/api"
 
   const playRadio = () => {
+    setFailedToLoad(false)
     setPlayText('Stop')
     if (info.id == undefined) return
     const audio = audioRef.current
@@ -39,9 +52,14 @@ function Player({ info, stations, country, slideRight, slideLeft }) {
         selectFavicon()
         setLoading(false)
       })
-      .catch(() => {
-        // al pausar un audio que aún se está cargando, se lanza un error, al no poder pausarlo, pero se detiene la carga,
-        // que es lo que queremos, por lo que se puede volver a cargar y reproducir sin problemas, así que se ignora el error
+      .catch((e) => {
+        // permitimos los errores de tipo AbortError porque se causan al cambiar de estación rápidamente
+        // antes de que la estación actual haya terminado de cargar
+        if (e.name != 'AbortError') {
+          errorMessage("Failed to load the radio station")
+          setLoading(false)
+          setFailedToLoad(true)
+        }
       })
   }
 
@@ -98,10 +116,11 @@ function Player({ info, stations, country, slideRight, slideLeft }) {
 
   return (
     <div className='player'>
+      {contextHolder}
 
       <div className="d-flex gap-2" style={{ justifyContent: 'space-between' }}>
         <div className="player-info">
-          <p className="player-title">{info.title}</p>
+          <p className={`player-title ${failedToLoad ? 'error-title' : ''}`}>{info.title}</p>
           <p className="player-country">{country}</p>
         </div>
         <p className="fs-5">{stations.map(station => station.page.title).indexOf(info.title) + 1}/{stations.length}</p>
