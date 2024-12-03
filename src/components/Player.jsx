@@ -14,10 +14,6 @@ import { AiOutlineLoading3Quarters } from "react-icons/ai";
 import { deselectFavicon, selectFavicon } from "../utilities";
 import { message } from 'antd';
 
-const Context = React.createContext({
-  name: 'Default',
-});
-
 function Player({ info, stations, country, slideRight, slideLeft }) {
 
   const [messageApi, contextHolder] = message.useMessage();
