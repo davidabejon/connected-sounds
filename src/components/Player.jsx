@@ -11,8 +11,8 @@ import { IoVolumeMedium } from "react-icons/io5";
 import { IoVolumeHigh } from "react-icons/io5";
 import { TbExternalLink } from "react-icons/tb";
 import { AiOutlineLoading3Quarters } from "react-icons/ai";
-import { deselectFavicon, selectFavicon } from "../utilities";
-import { message } from 'antd';
+import { deselectFavicon, selectFavicon, shortenText, TITLE_MAX_LENGTH } from "../utilities";
+import { message, Tooltip } from 'antd';
 
 function Player({ info, stations, country, slideRight, slideLeft }) {
 
@@ -116,7 +116,9 @@ function Player({ info, stations, country, slideRight, slideLeft }) {
 
       <div className="d-flex gap-2" style={{ justifyContent: 'space-between' }}>
         <div className="player-info">
-          <p className={`player-title ${failedToLoad ? 'error-title' : ''}`}>{info.title}</p>
+          <Tooltip title={info?.title?.length > TITLE_MAX_LENGTH ? info.title : ''} color="black" placement="top">
+            <p className={`player-title ${failedToLoad ? 'error-title' : ''}`}>{shortenText(info.title)}</p>
+          </Tooltip>
           <p className="player-country">{info.country}, {info.place}</p>
         </div>
         <p className="fs-5">{stations.map(station => station.page.title).indexOf(info.title) + 1}/{stations.length}</p>
