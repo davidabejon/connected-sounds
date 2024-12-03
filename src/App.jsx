@@ -66,7 +66,9 @@ function App() {
           let info = {
             title: stations[0].page.title,
             stream: stations[0].page.stream,
-            id: parseID(stations[0].page.url)
+            country: stations[0].page.country.title,
+            place: stations[0].page.place.title,
+            id: parseID(stations[0].page.url),
           }
           setActiveStation(info)
         })

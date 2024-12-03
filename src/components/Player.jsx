@@ -117,7 +117,7 @@ function Player({ info, stations, country, slideRight, slideLeft }) {
       <div className="d-flex gap-2" style={{ justifyContent: 'space-between' }}>
         <div className="player-info">
           <p className={`player-title ${failedToLoad ? 'error-title' : ''}`}>{info.title}</p>
-          <p className="player-country">{country}</p>
+          <p className="player-country">{info.country}, {info.place}</p>
         </div>
         <p className="fs-5">{stations.map(station => station.page.title).indexOf(info.title) + 1}/{stations.length}</p>
       </div>
