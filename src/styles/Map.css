@@ -94,20 +94,29 @@
     color: grey;
 }
 
-.map-layers {
+.top-right-btns {
     display: flex;
     flex-direction: column;
+    align-items: center;
     gap: .5rem;
     position: absolute;
     top: 1rem;
     right: 1rem;
     z-index: 1;
+}
+
+.map-layers, .info-btn {
     background-color: rgba(255, 255, 255, .3);
     padding: .8rem .8rem;
     border-radius: .5rem;
 
     transition: .4s all;
 }
-.map-layers:hover {
+.map-layers:hover, .info-btn:hover {
     background-color: rgba(70, 181, 203, 1);
+}
+
+.info-btn {
+    width: 73px;
+    height: 73px;
 }

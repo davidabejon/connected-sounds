@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react'
 import './App.css'
 import Player from './components/Player'
 import Map from './components/Map'
+import Welcome from './components/Welcome'
 
 function App() {
 
@@ -9,6 +10,8 @@ function App() {
   const [country, setCountry] = useState('')
   const [activeStations, setActiveStations] = useState([])
   const [activeStation, setActiveStation] = useState({})
+
+  const [isModalOpen, setIsModalOpen] = useState(false)
 
   const slideRightActiveStation = () => {
     let index = activeStations.findIndex(station => station.page.title === activeStation.title)
@@ -85,7 +88,8 @@ function App() {
 
   return (
     <div className='app'>
-      <Map setPlaceID={setPlaceID} setCountry={setCountry} />
+      <Welcome setIsModalOpen={setIsModalOpen} isModalOpen={isModalOpen} />
+      <Map setPlaceID={setPlaceID} setCountry={setCountry} showInfo={() => setIsModalOpen(true)} />
       <Player
         info={activeStation}
         stations={activeStations}

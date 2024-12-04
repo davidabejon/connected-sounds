@@ -18,8 +18,9 @@ import { IoLayers } from "react-icons/io5";
 import { IoLayersOutline } from "react-icons/io5";
 import faviconSelected from '../assets/favicon-selected.png';
 import { selectFavicon } from "../utilities";
+import { InfoCircleOutlined } from "@ant-design/icons";
 
-function Map({ setPlaceID, setCountry }) {
+function Map({ setPlaceID, setCountry, showInfo }) {
 
   const [layers, setLayers] = useState([]);
   const [showLabels, setShowLabels] = useState(false);
@@ -263,8 +264,9 @@ function Map({ setPlaceID, setCountry }) {
       <div className="panel-body" style={{ width: '100%' }}>
         <div id="map" className="panel-body" style={{ width: '100%' }}></div>
       </div>
-      <div className="map-layers">
-        <button onClick={changeLayer}>{showLabels ? <IoLayers size={48} color="white" /> : <IoLayersOutline size={48} color="white" />}</button>
+      <div className="top-right-btns">
+        <button className="map-layers" onClick={changeLayer}>{showLabels ? <IoLayers size={48} color="white" /> : <IoLayersOutline size={48} color="white" />}</button>
+        <button className="info-btn" onClick={showInfo}><InfoCircleOutlined style={{fontSize: '2.5em', color: 'white'}} /></button>
       </div>
     </div>
   );
