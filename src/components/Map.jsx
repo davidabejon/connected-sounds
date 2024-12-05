@@ -99,14 +99,14 @@ function Map({ setPlaceID, setCountry, showInfo }) {
             let Baselayers = [
               new TileLayer({
                 source: new BingMaps({
-                  key: 'An5Pw7hvyEBSitSs8ZakuMdzOEkbznBormT5vrv2KyT52YoEvklnYoTxzn2wrrdF',
+                  key: import.meta.env.VITE_BING_MAPS_API_KEY,
                   imagerySet: 'AerialWithLabelsOnDemand',
                   placeholderTiles: false,
                 }),
               }),
               new TileLayer({
                 source: new BingMaps({
-                  key: 'An5Pw7hvyEBSitSs8ZakuMdzOEkbznBormT5vrv2KyT52YoEvklnYoTxzn2wrrdF',
+                  key: import.meta.env.VITE_BING_MAPS_API_KEY,
                   imagerySet: 'Aerial',
                   placeholderTiles: false,
                 }),
@@ -266,7 +266,7 @@ function Map({ setPlaceID, setCountry, showInfo }) {
       </div>
       <div className="top-right-btns">
         <button className="map-layers" onClick={changeLayer}>{showLabels ? <IoLayers size={48} color="white" /> : <IoLayersOutline size={48} color="white" />}</button>
-        <button className="info-btn" onClick={showInfo}><InfoCircleOutlined style={{fontSize: '2.5em', color: 'white'}} /></button>
+        <button className="info-btn" onClick={showInfo}><InfoCircleOutlined style={{ fontSize: '2.5em', color: 'white' }} /></button>
       </div>
     </div>
   );
