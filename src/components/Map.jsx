@@ -19,6 +19,7 @@ import { IoLayersOutline } from "react-icons/io5";
 import faviconSelected from '../assets/favicon-selected.png';
 import { selectFavicon } from "../utilities";
 import { InfoCircleOutlined } from "@ant-design/icons";
+import XYZ from 'ol/source/XYZ';
 
 function Map({ setPlaceID, setCountry, showInfo }) {
 
@@ -110,7 +111,22 @@ function Map({ setPlaceID, setCountry, showInfo }) {
                   imagerySet: 'Aerial',
                   placeholderTiles: false,
                 }),
-              })
+              }),
+              /**
+               * ES: Capa de Azure Maps sin usar hasta que Bing Maps deje de funcionar (junio 2025)
+               * EN: Azure Maps Layer unused until Bing Maps stops working (June 2025)
+               * https://learn.microsoft.com/es-es/rest/api/maps/render/get-map-tileset?view=rest-maps-2024-04-01&tabs=HTTP#tilesetid
+              */
+              // new TileLayer({
+              //   source: new XYZ({
+              //     url: `https://atlas.microsoft.com/map/tile?api-version=2.0&tilesetId=microsoft.imagery.hybrid&zoom={z}&x={x}&y={y}&subscription-key=${import.meta.env.VITE_AZURE_MAPS_API_KEY}`,
+              //   }),
+              // }),
+              // new TileLayer({
+              //   source: new XYZ({
+              //     url: `https://atlas.microsoft.com/map/tile?api-version=2.0&tilesetId=microsoft.imagery&zoom={z}&x={x}&y={y}&subscription-key=${import.meta.env.VITE_AZURE_MAPS_API_KEY}`,
+              //   }),
+              // }),
             ]
             setLayers(Baselayers)
 
