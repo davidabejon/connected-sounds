@@ -20,3 +20,10 @@ export const shortenText = (text) => {
     return text;
   }
 }
+
+// calculate volume with a logarithmic scale
+export function calculateVolume(input, maxVolume = 1, gamma = 2) {
+  let normalizedInput = Math.min(Math.max(input, 0), 1);
+  let perceivedVolume = Math.pow(normalizedInput, gamma);
+  return perceivedVolume * maxVolume;
+}

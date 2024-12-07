@@ -11,7 +11,7 @@ import { IoVolumeMedium } from "react-icons/io5";
 import { IoVolumeHigh } from "react-icons/io5";
 import { TbExternalLink } from "react-icons/tb";
 import { AiOutlineLoading3Quarters } from "react-icons/ai";
-import { deselectFavicon, selectFavicon, shortenText, TITLE_MAX_LENGTH } from "../utilities";
+import { calculateVolume, deselectFavicon, selectFavicon, shortenText, TITLE_MAX_LENGTH } from "../utilities";
 import { message, Tooltip } from 'antd';
 
 function Player({ info, stations, country, slideRight, slideLeft }) {
@@ -65,7 +65,7 @@ function Player({ info, stations, country, slideRight, slideLeft }) {
 
   useEffect(() => {
     if (audioRef.current) {
-      audioRef.current.volume = volumeValue;
+      audioRef.current.volume = calculateVolume(volumeValue);
       if (volumeValue == 0) {
         setMuted(true)
         setMutedText('Unmute')
