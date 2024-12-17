@@ -146,8 +146,9 @@ function Map({ setPlaceID, setCountry, showInfo }) {
                 }
                 return new Style({
                   image: new Icon({
-                    anchorXUnits: 'pixels',
-                    anchorYUnits: 'pixels',
+                    anchorXUnits: 'fraction',
+                    anchorYUnits: 'fraction',
+                    anchor: [0.5, 0.5],
                     width: width,
                     height: height,
                     src: iconSrc,
