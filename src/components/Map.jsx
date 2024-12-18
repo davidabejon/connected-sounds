@@ -20,11 +20,13 @@ import faviconSelected from '../assets/favicon-selected.png';
 import { selectFavicon } from "../utilities";
 import { InfoCircleOutlined } from "@ant-design/icons";
 import XYZ from 'ol/source/XYZ';
+import { Flex, Popover, Select, Switch } from "antd";
 
 function Map({ setPlaceID, setCountry, showInfo }) {
 
   const [layers, setLayers] = useState([]);
   const [showLabels, setShowLabels] = useState(false);
+  const [disableShowLabels, setDisableShowLabels] = useState(false);
 
   useEffect(() => {
 
@@ -97,6 +99,7 @@ function Map({ setPlaceID, setCountry, showInfo }) {
               );
             })
 
+            // 0 = AerialWithLabelsOnDemand, 1 = Aerial
             let Baselayers = [
               new TileLayer({
                 source: new BingMaps({
@@ -109,6 +112,13 @@ function Map({ setPlaceID, setCountry, showInfo }) {
                 source: new BingMaps({
                   key: import.meta.env.VITE_BING_MAPS_API_KEY,
                   imagerySet: 'Aerial',
+                  placeholderTiles: false,
+                }),
+              }),
+              new TileLayer({
+                source: new BingMaps({
+                  key: import.meta.env.VITE_BING_MAPS_API_KEY,
+                  imagerySet: 'RoadOnDemand',
                   placeholderTiles: false,
                 }),
               }),
@@ -128,7 +138,12 @@ function Map({ setPlaceID, setCountry, showInfo }) {
               //   }),
               // }),
             ]
-            setLayers(Baselayers)
+
+            /**
+             * ES: Ocultar la capa de carreteras por defecto
+             * EN: Hide the road layer by default
+             */
+            Baselayers[2].setOpacity(0);
 
             let vectorLayer = new VectorLayer({
               source: new VectorSource({
@@ -158,6 +173,8 @@ function Map({ setPlaceID, setCountry, showInfo }) {
               }
             });
 
+            setLayers([...Baselayers, vectorLayer])
+
             /**
              * ES: Crear el mapa OpenLayers
              * EN: Create the OpenLayers map
@@ -167,7 +184,7 @@ function Map({ setPlaceID, setCountry, showInfo }) {
               overlays: [overlay],
               layers: [
                 ...Baselayers,
-                vectorLayer
+                vectorLayer // last layer is the layer containing the points
               ],
               view: new View({
                 /**
@@ -265,16 +282,43 @@ function Map({ setPlaceID, setCountry, showInfo }) {
 
   }, [])
 
-  const changeLayer = () => {
-    if (showLabels) {
-      layers[0].setOpacity(0);
-      layers[1].setOpacity(1);
-      setShowLabels(false);
-    }
-    else {
+  const showHideLabels = (checked) => {
+    setShowLabels(checked);
+    if (checked) {
       layers[0].setOpacity(1);
       layers[1].setOpacity(0);
-      setShowLabels(true);
+    }
+    else {
+      layers[0].setOpacity(0);
+      layers[1].setOpacity(1);
+    }
+  }
+
+  const showHideRadios = (checked) => {
+    if (checked) {
+      layers[layers.length - 1].setVisible(true);
+    }
+    else {
+      layers[layers.length - 1].setVisible(false);
+    }
+  }
+
+  const changeLayer = (value) => {
+    layers[0].setOpacity(0);
+
+    if (showLabels) setShowLabels(false);
+
+    switch (value) {
+      case 'Aerial':
+        layers[1].setOpacity(1);
+        layers[2].setOpacity(0);
+        setDisableShowLabels(false);
+        break;
+      case 'Road':
+        layers[1].setOpacity(0);
+        layers[2].setOpacity(1);
+        setDisableShowLabels(true);
+        break;
     }
   }
 
@@ -284,7 +328,35 @@ function Map({ setPlaceID, setCountry, showInfo }) {
         <div id="map" className="panel-body" style={{ width: '100%' }}></div>
       </div>
       <div className="top-right-btns">
-        <button className="map-layers" onClick={changeLayer}>{showLabels ? <IoLayers size={48} color="white" /> : <IoLayersOutline size={48} color="white" />}</button>
+        <Popover placement="leftBottom" content={
+          <div className="d-flex flex-column gap-2">
+            <h4>Map options</h4>
+            <div className="d-flex gap-2 justify-content-between">
+              <p>Show labels</p>
+              <Switch value={showLabels} onChange={showHideLabels} disabled={disableShowLabels} />
+            </div>
+            <div className="d-flex gap-2 justify-content-between">
+              <p>Show radios</p>
+              <Switch defaultChecked onChange={showHideRadios} />
+            </div>
+            <Select
+              defaultValue={'Aerial'}
+              onChange={changeLayer}
+              options={[
+                {
+                  value: 'Aerial',
+                  label: 'Aerial',
+                },
+                {
+                  value: 'Road',
+                  label: 'Road',
+                },
+              ]}
+            />
+          </div>
+        }>
+          <button className="map-layers"><IoLayersOutline size={48} color="white" /></button>
+        </Popover>
         <button className="info-btn" onClick={showInfo}><InfoCircleOutlined style={{ fontSize: '2.5em', color: 'white' }} /></button>
       </div>
     </div>
