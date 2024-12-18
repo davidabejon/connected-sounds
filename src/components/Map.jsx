@@ -203,8 +203,9 @@ function Map({ setPlaceID, setCountry, showInfo }) {
                   activeFeature.setStyle(new Style({
                     image: new Icon({
                       opacity: .6,
-                      anchorXUnits: 'pixels',
-                      anchorYUnits: 'pixels',
+                      anchorXUnits: 'fraction',
+                      anchorYUnits: 'fraction',
+                      anchor: [0.5, 0.5],
                       width: widthPrevious,
                       height: heightPrevious,
                       src: notSelectedRadioIcon
@@ -225,8 +226,9 @@ function Map({ setPlaceID, setCountry, showInfo }) {
                   zIndex: 99,
                   image: new Icon({
                     opacity: 1,
-                    anchorXUnits: 'pixels',
-                    anchorYUnits: 'pixels',
+                    anchorXUnits: 'fraction',
+                    anchorYUnits: 'fraction',
+                    anchor: [0.5, 0.5],
                     width: width,
                     height: height,
                     src: selectedRadioIcon
