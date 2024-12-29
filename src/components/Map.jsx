@@ -284,41 +284,69 @@ function Map({ setPlaceID, setCountry, showInfo }) {
 
   const showHideLabels = (checked) => {
     setShowLabels(checked);
+    layers[0].setVisible(true);
     if (checked) {
-      layers[0].setOpacity(1);
-      layers[1].setOpacity(0);
+      fadeOutLayer(layers[1]);
     }
     else {
-      layers[0].setOpacity(0);
-      layers[1].setOpacity(1);
+      fadeInLayer(layers[1]);
     }
   }
 
   const showHideRadios = (checked) => {
     if (checked) {
-      layers[layers.length - 1].setVisible(true);
+      fadeInLayer(layers[layers.length - 1]);
     }
     else {
-      layers[layers.length - 1].setVisible(false);
+      fadeOutLayer(layers[layers.length - 1]);
     }
   }
 
   const changeLayer = (value) => {
-    layers[0].setOpacity(0);
 
     if (showLabels) setShowLabels(false);
 
     switch (value) {
       case 'Aerial':
-        layers[1].setOpacity(1);
-        layers[2].setOpacity(0);
+        layers[0].setOpacity(1);
+        fadeInLayer(layers[1]);
+        fadeOutLayer(layers[2]);
         setDisableShowLabels(false);
         break;
       case 'Road':
-        layers[1].setOpacity(0);
-        layers[2].setOpacity(1);
+        layers[0].setOpacity(0);
+        fadeOutLayer(layers[1]);
+        fadeInLayer(layers[2]);
         setDisableShowLabels(true);
         break;
+    }
+  }
+
+  const fadeOutLayer = (layer) => {
+    let opacity = layer.getOpacity();
+    if (opacity > 0) {
+      layer.setOpacity(opacity - 0.05);
+      setTimeout(() => {
+        fadeOutLayer(layer);
+      }, 10);
+    }
+    else {
+      console.log('layer hidden');
+      layer.setVisible(false);
+    }
+  }
+
+  const fadeInLayer = (layer) => {
+    layer.setVisible(true);
+    fadeInLayerAux(layer);
+  }
+  const fadeInLayerAux = (layer) => {
+    let opacity = layer.getOpacity();
+    if (opacity < 1) {
+      layer.setOpacity(opacity + 0.05);
+      setTimeout(() => {
+        fadeInLayer(layer);
+      }, 10);
     }
   }
 
