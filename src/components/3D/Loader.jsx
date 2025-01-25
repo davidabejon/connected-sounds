@@ -1,7 +1,6 @@
 import { Html, useProgress } from "@react-three/drei";
 import { Spin } from "antd";
 import '../../styles/Loading.css'
-import { LoadingOutlined } from "@ant-design/icons";
 
 // Componente para mostrar el mensaje de carga
 const Loading = () => {

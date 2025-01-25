@@ -1,9 +1,7 @@
-import { Html, OrbitControls, Stars, TrackballControls, useProgress, useTexture } from '@react-three/drei';
-import { useFrame, useThree } from '@react-three/fiber';
+import { OrbitControls, Stars, TrackballControls, useTexture } from '@react-three/drei';
+import { useFrame } from '@react-three/fiber';
 import { Bloom, EffectComposer } from '@react-three/postprocessing';
 import { useEffect, useRef, useState } from 'react';
-import * as THREE from 'three';
-
 
 // Función corregida para convertir coordenadas geográficas (lat, lon) a 3D con inversión en el eje y
 const geoTo3D = (lat, lon, radius) => {
@@ -79,9 +77,6 @@ function Map3D({ setPlaceID, setCountry, showInfo }) {
     positions[index * 3 + 1] = y;
     positions[index * 3 + 2] = z;
   });
-
-  const { progress } = useProgress();
-
 
   return (
     <>

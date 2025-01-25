@@ -5,7 +5,7 @@ import Player from './components/2D/Player'
 import Map from './components/2D/Map'
 import { Canvas } from '@react-three/fiber'
 import Map3D from './components/3D/Map3D'
-import { FloatButton, Switch } from 'antd'
+import { Switch } from 'antd'
 import { Loader } from '@react-three/drei'
 import Loading from './components/3D/Loader'
 
@@ -117,7 +117,7 @@ function App() {
       <div className='mode'>
         <Switch onChange={changeMode} checkedChildren="3D" unCheckedChildren="2D" defaultChecked />
       </div>
-      {/* <Welcome setIsModalOpen={setIsModalOpen} isModalOpen={isModalOpen} /> */}
+      <Welcome setIsModalOpen={setIsModalOpen} isModalOpen={isModalOpen} />
       {
         mode === '3D' ?
           <>
