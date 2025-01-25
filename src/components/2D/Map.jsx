@@ -280,6 +280,11 @@ function Map({ setPlaceID, setCountry, showInfo }) {
 
       })
 
+      return () => {
+        setPlaceID('');
+        setCountry('');
+      }
+
   }, [])
 
   const showHideLabels = (checked) => {

@@ -5,6 +5,7 @@ import Player from './components/2D/Player'
 import Map from './components/2D/Map'
 import { Canvas } from '@react-three/fiber'
 import Map3D from './components/3D/Map3D'
+import { FloatButton, Switch } from 'antd'
 
 function App() {
 
@@ -90,9 +91,31 @@ function App() {
     }
   }, [placeID])
 
+  const changeMode = (checked) => {
+    document.querySelectorAll('audio').forEach(el => el.pause());
+    if (checked) {
+      setMode('3D')
+    } else {
+      setMode('2D')
+    }
+  }
+  useEffect(() => {
+    setActiveStation({})
+    setActiveStations([])
+    setPlaceID('')
+    setCountry('')
+    var root = document.querySelector(':root');
+    root.style.setProperty('--visibility', 'hidden');
+    root.style.setProperty('--opacity', '0');
+    console.log('mode', mode)
+  }, [mode])
+
   return (
     <div className='app'>
-      {/* <Welcome setIsModalOpen={setIsModalOpen} isModalOpen={isModalOpen} /> */}
+      <div className='mode'>
+        <Switch onChange={changeMode} checkedChildren="3D" unCheckedChildren="2D" defaultChecked />
+      </div>
+      <Welcome setIsModalOpen={setIsModalOpen} isModalOpen={isModalOpen} />
       {
         mode === '3D' ?
           <>

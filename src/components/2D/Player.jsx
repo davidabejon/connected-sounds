@@ -61,6 +61,10 @@ function Player({ info, stations, country, slideRight, slideLeft }) {
 
   useEffect(() => {
     playRadio();
+    return () => {
+      audioRef.current.pause();
+      // audioRef.current = null;
+    }
   }, [info])
 
   useEffect(() => {
