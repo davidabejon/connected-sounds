@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { Suspense, useEffect, useState } from 'react'
 import './App.css'
 import Welcome from './components/Welcome'
 import Player from './components/2D/Player'
@@ -6,6 +6,8 @@ import Map from './components/2D/Map'
 import { Canvas } from '@react-three/fiber'
 import Map3D from './components/3D/Map3D'
 import { FloatButton, Switch } from 'antd'
+import { Loader } from '@react-three/drei'
+import Loading from './components/3D/Loader'
 
 function App() {
 
@@ -115,14 +117,17 @@ function App() {
       <div className='mode'>
         <Switch onChange={changeMode} checkedChildren="3D" unCheckedChildren="2D" defaultChecked />
       </div>
-      <Welcome setIsModalOpen={setIsModalOpen} isModalOpen={isModalOpen} />
+      {/* <Welcome setIsModalOpen={setIsModalOpen} isModalOpen={isModalOpen} /> */}
       {
         mode === '3D' ?
           <>
             <div className='mirilla'></div>
             <Canvas>
-              <Map3D setPlaceID={setPlaceID} setCountry={setCountry} showInfo={() => setIsModalOpen(true)} />
+              <Suspense fallback={<Loading />}>
+                <Map3D setPlaceID={setPlaceID} setCountry={setCountry} showInfo={() => setIsModalOpen(true)} />
+              </Suspense>
             </Canvas>
+            <Loader />
           </>
           :
           <>

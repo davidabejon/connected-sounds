@@ -1,5 +1,6 @@
-import { OrbitControls, Stars, useTexture } from '@react-three/drei';
-import { useFrame } from '@react-three/fiber';
+import { Html, OrbitControls, Stars, TrackballControls, useProgress, useTexture } from '@react-three/drei';
+import { useFrame, useThree } from '@react-three/fiber';
+import { Bloom, EffectComposer } from '@react-three/postprocessing';
 import { useEffect, useRef, useState } from 'react';
 import * as THREE from 'three';
 
@@ -18,8 +19,12 @@ const geoTo3D = (lat, lon, radius) => {
 };
 
 function Map3D({ setPlaceID, setCountry, showInfo }) {
+
+  window.onmousedown = () => document.getElementsByTagName('canvas')[0].style.cursor = 'grabbing';
+  window.onmouseup = () => document.getElementsByTagName('canvas')[0].style.cursor = 'grab';
+
   const [points, setPoints] = useState([]);
-  const [pointScale, setPointScale] = useState(0.005); 
+  const [pointScale, setPointScale] = useState(0.005);
 
   useEffect(() => {
     const url = "/api" + "/ara/content/places";
@@ -49,21 +54,22 @@ function Map3D({ setPlaceID, setCountry, showInfo }) {
       if (distance > 3.2) {
         setPointScale(0.01);
         controlsRef.current.rotateSpeed = 0.5;
-      } else if (distance > 2.5) {
+      } else if (distance > 2.6) {
         setPointScale(0.01);
-        controlsRef.current.rotateSpeed = 0.4;
-      } else if (distance > 2.3) {
-        setPointScale(0.005);
         controlsRef.current.rotateSpeed = 0.3;
+      } else if (distance > 2.4) {
+        setPointScale(0.005);
+        controlsRef.current.rotateSpeed = 0.2;
       } else {
-        setPointScale(0.003);
+        setPointScale(0.004);
         controlsRef.current.rotateSpeed = 0.05;
       }
     }
   });
 
   const radius = 2; // Radio de la esfera de la Tierra
-  const rotationAngle = Math.PI - 0.0023; // Ajusta este valor para rotar la textura
+  const rotationAngleX = Math.PI - 0.0023; // Ajusta este valor para rotar la textura
+  const rotationAngleZ = - 0.003; // Ajusta este valor para rotar la textura
 
   // Crear los atributos de los puntos
   const positions = new Float32Array(points.length * 3);
@@ -74,10 +80,13 @@ function Map3D({ setPlaceID, setCountry, showInfo }) {
     positions[index * 3 + 2] = z;
   });
 
+  const { progress } = useProgress();
+
+
   return (
     <>
       {/* Tierra */}
-      <mesh rotation={[0, rotationAngle, 0]}> {/* Rotación en el eje Y */}
+      <mesh rotation={[0, rotationAngleX, rotationAngleZ]}> {/* Rotación en el eje Y */}
         <sphereGeometry args={[radius, 32, 32]} />
         <meshStandardMaterial map={daymap} bumpMap={bump} bumpScale={100} />
       </mesh>
@@ -99,9 +108,18 @@ function Map3D({ setPlaceID, setCountry, showInfo }) {
               itemSize={3}
             />
           </bufferGeometry>
-          <pointsMaterial size={pointScale} color="red" />
+          <pointsMaterial size={pointScale} color="gold" />
         </points>
       )}
+
+      {/* Efectos de brillo */}
+      <EffectComposer>
+        <Bloom
+          intensity={.5} // Ajusta la intensidad del brillo
+          luminanceThreshold={0.1} // Ajusta el umbral del brillo
+          luminanceSmoothing={1}
+        />
+      </EffectComposer>
 
       {/* Estrellas */}
       <Stars
@@ -122,9 +140,16 @@ function Map3D({ setPlaceID, setCountry, showInfo }) {
       {/* Controles */}
       <OrbitControls
         ref={controlsRef}
-        minDistance={2.2}
+        minDistance={2.3}
         maxDistance={6}
         enablePan={false}
+        enableZoom={false}
+      />
+
+      <TrackballControls
+        noRotate
+        noPan
+        zoomSpeed={0.8}
       />
 
       {/* Fondo */}
