@@ -1,0 +1,39 @@
+.title-gradient {
+    background: rgb(63, 94, 251);
+    background: linear-gradient(90deg, rgba(63, 94, 251, 1) 0%, rgba(252, 70, 107, 1) 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
+.about-me-gradient {
+    background: rgb(180, 58, 163);
+    background: linear-gradient(90deg, rgba(180, 58, 163, 1) 0%, rgba(77, 29, 253, 1) 50%, rgba(69, 199, 252, 1) 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
+.subtitle {
+    color: rgba(0, 0, 0, 0.45);
+    text-align: center;
+}
+
+#welcome-video, .my-photo {
+    width: 250px;
+    border-radius: .5rem;
+    object-fit: cover;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.6);
+}
+
+@media (max-width: 768px) {
+    #welcome-video, .my-photo {
+        display: none;
+    }
+
+    .title-gradient {
+        font-size: 1.5rem;
+    }
+}
+
+.link:hover {
+    text-decoration: underline;
+}

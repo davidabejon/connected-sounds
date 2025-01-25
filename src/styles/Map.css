@@ -1,0 +1,122 @@
+.map {
+    height: 100vh;
+    width: 100vw;
+
+    justify-content: center;
+}
+
+.panel-body,
+#map {
+    width: 100%;
+    height: 100vh;
+}
+
+/* Regla CSS para definir la estética de los controles del mapa */
+.ol-overlaycontainer-stopevent {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+
+.ol-zoom {
+    display: flex;
+    flex-direction: column;
+    width: fit-content;
+    gap: .5rem;
+    margin-left: 0.5rem;
+    margin-top: 0.5rem;
+}
+
+.ol-zoom button {
+    font-size: 2rem;
+    padding: .5rem 1.2rem;
+    color: white;
+    background-color: rgba(255, 255, 255, .3);
+    border: none;
+    border-radius: 10px;
+    cursor: pointer;
+    transition: .4s all;
+}
+
+.ol-zoom button:hover {
+    background-color: rgba(70, 181, 203, 1);
+}
+
+/* Escondemos botones de controles que no usaremos */
+.ol-rotate {
+    display: none;
+}
+
+.ol-attribution button {
+    display: none;
+}
+
+/* Damos estilo a la atribución */
+.ol-attribution {
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+}
+
+.ol-attribution ul {
+    width: fit-content;
+    list-style: none;
+    display: flex;
+    flex-wrap: wrap;
+    gap: .7rem;
+
+    padding: .2rem .5rem;
+    margin-right: .5rem;
+    margin-bottom: 0.5rem;
+    border-radius: 10px;
+
+    border: 3px solid rgba(255, 255, 255, 0.8);
+    background-color: rgba(255, 255, 255, 0.4);
+    backdrop-filter: blur(5px);
+    color: black;
+}
+@media (max-width: 768px) {
+    .ol-attribution ul {
+        display: none;
+    }
+}
+
+.ol-attribution ul li {
+    font-size: .7rem;
+}
+
+.ol-attribution ul li a {
+    color: black;
+    transition: .5s all;
+}
+
+.ol-attribution ul li a:hover {
+    color: grey;
+}
+
+.top-right-btns {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: .5rem;
+    position: absolute;
+    top: .5rem;
+    right: .5rem;
+    z-index: 1;
+}
+
+.map-layers, .info-btn {
+    background-color: rgba(255, 255, 255, .3);
+    padding: .5rem .5rem;
+    border-radius: .5rem;
+
+    transition: .4s all;
+}
+.map-layers:hover, .info-btn:hover {
+    background-color: rgba(70, 181, 203, 1);
+}
+
+.info-btn {
+    width: 64px;
+    height: 64px;
+}
