@@ -1,10 +1,14 @@
 import { useEffect, useState } from 'react'
 import './App.css'
-import Player from './components/Player'
-import Map from './components/Map'
 import Welcome from './components/Welcome'
+import Player from './components/2D/Player'
+import Map from './components/2D/Map'
+import { Canvas } from '@react-three/fiber'
+import Map3D from './components/3D/Map3D'
 
 function App() {
+
+  const [mode, setMode] = useState('3D')
 
   const [placeID, setPlaceID] = useState('')
   const [country, setCountry] = useState('')
@@ -88,15 +92,27 @@ function App() {
 
   return (
     <div className='app'>
-      <Welcome setIsModalOpen={setIsModalOpen} isModalOpen={isModalOpen} />
-      <Map setPlaceID={setPlaceID} setCountry={setCountry} showInfo={() => setIsModalOpen(true)} />
-      <Player
-        info={activeStation}
-        stations={activeStations}
-        country={country}
-        slideLeft={slideLeftActiveStation}
-        slideRight={slideRightActiveStation}
-      />
+      {/* <Welcome setIsModalOpen={setIsModalOpen} isModalOpen={isModalOpen} /> */}
+      {
+        mode === '3D' ?
+          <>
+            <div className='mirilla'></div>
+            <Canvas>
+              <Map3D setPlaceID={setPlaceID} setCountry={setCountry} showInfo={() => setIsModalOpen(true)} />
+            </Canvas>
+          </>
+          :
+          <>
+            <Map setPlaceID={setPlaceID} setCountry={setCountry} showInfo={() => setIsModalOpen(true)} />
+            <Player
+              info={activeStation}
+              stations={activeStations}
+              country={country}
+              slideLeft={slideLeftActiveStation}
+              slideRight={slideRightActiveStation}
+            />
+          </>
+      }
     </div>
   )
 }
