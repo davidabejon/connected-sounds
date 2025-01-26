@@ -27,3 +27,15 @@ export function calculateVolume(input, maxVolume = 1, gamma = 2) {
   let perceivedVolume = Math.pow(normalizedInput, gamma);
   return perceivedVolume * maxVolume;
 }
+
+// calculate latitude and longitude to 3D coordinates on a sphere
+export const geoTo3D = (lat, lon, radius) => {
+  const latRad = (lat * Math.PI) / 180;
+  const lonRad = (lon * Math.PI) / 180;
+
+  const x = -radius * Math.cos(latRad) * Math.cos(lonRad); // negating x to match the 3D model
+  const y = radius * Math.sin(latRad);
+  const z = radius * Math.cos(latRad) * Math.sin(lonRad);
+
+  return [x, y, z];
+};

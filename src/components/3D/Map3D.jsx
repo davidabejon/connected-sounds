@@ -3,19 +3,7 @@ import { useFrame, useThree } from '@react-three/fiber';
 import { Bloom, EffectComposer } from '@react-three/postprocessing';
 import { useEffect, useRef, useState } from 'react';
 import * as THREE from 'three';
-
-// Función corregida para convertir coordenadas geográficas (lat, lon) a 3D con inversión en el eje y
-const geoTo3D = (lat, lon, radius) => {
-  const latRad = (lat * Math.PI) / 180; // Convertir latitud a radianes
-  const lonRad = (lon * Math.PI) / 180; // Convertir longitud a radianes
-
-  // Cálculo de las coordenadas cartesianas (x, y, z)
-  const x = -radius * Math.cos(latRad) * Math.cos(lonRad);
-  const y = radius * Math.sin(latRad); // Invertir el eje Y
-  const z = radius * Math.cos(latRad) * Math.sin(lonRad);
-
-  return [x, y, z];
-};
+import { geoTo3D } from '../../utilities';
 
 function Map3D({ setPlaceID, setCountry, showInfo }) {
 
@@ -157,7 +145,7 @@ function Map3D({ setPlaceID, setCountry, showInfo }) {
 
         if (validIntersections.length > 0) {
           // obtener intersection con menor distancia distanceToRay
-          const menorDistancia = intersects.reduce((prev, current) =>
+          const menorDistancia = validIntersections.reduce((prev, current) =>
             prev.distanceToRay < current.distanceToRay ? prev : current
           );
           const { lat, lon, place, country, url, id } = metadata[menorDistancia.index];
