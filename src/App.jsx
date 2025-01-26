@@ -7,7 +7,7 @@ import { Canvas } from '@react-three/fiber'
 import Map3D from './components/3D/Map3D'
 import { Switch } from 'antd'
 import { Loader } from '@react-three/drei'
-import Loading from './components/3D/Loader'
+import Loading from './components/3D/Loading'
 
 function App() {
 
@@ -117,7 +117,7 @@ function App() {
       <div className='mode'>
         <Switch onChange={changeMode} checkedChildren="3D" unCheckedChildren="2D" defaultChecked />
       </div>
-      <Welcome setIsModalOpen={setIsModalOpen} isModalOpen={isModalOpen} />
+      {/* <Welcome setIsModalOpen={setIsModalOpen} isModalOpen={isModalOpen} /> */}
       {
         mode === '3D' ?
           <>
@@ -128,6 +128,13 @@ function App() {
               </Suspense>
             </Canvas>
             <Loader />
+            <Player
+              info={activeStation}
+              stations={activeStations}
+              country={country}
+              slideLeft={slideLeftActiveStation}
+              slideRight={slideRightActiveStation}
+            />
           </>
           :
           <>
