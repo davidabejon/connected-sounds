@@ -10,6 +10,8 @@ function Map3D({ setPlaceID, setCountry, showInfo }) {
   window.onmousedown = () => document.getElementsByTagName('canvas')[0].style.cursor = 'grabbing';
   window.onmouseup = () => document.getElementsByTagName('canvas')[0].style.cursor = 'grab';
 
+  const [startAnimation, setStartAnimation] = useState(true);
+
   const [points, setPoints] = useState([]);
   const [pointScale, setPointScale] = useState(0.005);
 
@@ -160,6 +162,20 @@ function Map3D({ setPlaceID, setCountry, showInfo }) {
 
   };
 
+  useFrame(() => {
+    if (startAnimation) {
+      if (scene.rotation.y >= Math.PI * 2 && startAnimation) {
+        setStartAnimation(false);
+      }
+      else {
+        scene.rotation.y += 0.006;
+        // ir cambiando la rotación de la x para que se vea el planeta girando, según la función del seno
+        scene.rotation.x = Math.sin(scene.rotation.y) * 0.5;
+
+      }
+    }
+  })
+
 
   return (
     <>
@@ -212,6 +228,7 @@ function Map3D({ setPlaceID, setCountry, showInfo }) {
         maxDistance={6}
         enablePan={false}
         enableZoom={false}
+        enableRotate={!startAnimation}
       />
 
       <TrackballControls noRotate noPan zoomSpeed={0.8} />
@@ -220,7 +237,7 @@ function Map3D({ setPlaceID, setCountry, showInfo }) {
       <color args={['black']} attach="background" />
 
       {/* Estrellas: Colocarlas al final */}
-      <Stars
+      {/* <Stars
         radius={100}
         depth={200}
         count={5000}
@@ -229,7 +246,7 @@ function Map3D({ setPlaceID, setCountry, showInfo }) {
         color="green"
         fade
         speed={1}
-      />
+      /> */}
     </>
   );
 }
