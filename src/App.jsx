@@ -132,7 +132,7 @@ function App() {
         mode === '3D' ?
           <>
             <div id='crosshair' className='crosshair'></div>
-            <Canvas>
+            <Canvas style={{ width: '100vw', height: '100vh' }}>
               <Suspense fallback={<Loading />}>
                 <Map3D setPlaceID={setPlaceID} setCountry={setCountry} showInfo={() => setIsModalOpen(true)} />
               </Suspense>
