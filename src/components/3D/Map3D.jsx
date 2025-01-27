@@ -5,6 +5,11 @@ import { useEffect, useRef, useState } from 'react';
 import * as THREE from 'three';
 import { geoTo3D } from '../../utilities';
 
+const radius = 2;
+const earth_detail = 48;
+const rotationAngleX = Math.PI - 0.0023;
+const rotationAngleZ = -0.001;
+
 function Map3D({ setPlaceID, setCountry, showInfo }) {
 
   window.onmousedown = () => document.getElementsByTagName('canvas')[0].style.cursor = 'grabbing';
@@ -64,10 +69,6 @@ function Map3D({ setPlaceID, setCountry, showInfo }) {
       }
     }
   });
-
-  const radius = 2; // Radio de la esfera de la Tierra
-  const rotationAngleX = Math.PI - 0.0023; // Ajusta este valor para rotar la textura
-  const rotationAngleZ = -0.003; // Ajusta este valor para rotar la textura
 
   // Crear los atributos de los puntos
   const positions = new Float32Array(points.length * 3);
@@ -182,13 +183,13 @@ function Map3D({ setPlaceID, setCountry, showInfo }) {
       <group onPointerDown={handleMouseDown} onPointerMove={handleMouseMove} onPointerUp={handleMouseUp}>
         {/* Tierra */}
         <mesh rotation={[0, rotationAngleX, rotationAngleZ]}>
-          <sphereGeometry args={[radius, 32, 32]} />
+          <sphereGeometry args={[radius, earth_detail, earth_detail]} />
           <meshStandardMaterial map={daymap} bumpMap={bump} bumpScale={100} />
         </mesh>
 
         {/* Nubes */}
-        <mesh scale={1.025}>
-          <sphereGeometry args={[radius, 32, 32]} />
+        <mesh scale={1.01}>
+          <sphereGeometry args={[radius, earth_detail, earth_detail]} />
           <meshStandardMaterial transparent opacity={0.2} map={cloudMap} />
         </mesh>
 
@@ -231,7 +232,7 @@ function Map3D({ setPlaceID, setCountry, showInfo }) {
         enableRotate={!startAnimation}
       />
 
-      <TrackballControls noRotate noPan zoomSpeed={0.8} />
+      <TrackballControls noRotate noPan zoomSpeed={0.8} noZoom={startAnimation} />
 
       {/* Fondo */}
       <color args={['black']} attach="background" />
