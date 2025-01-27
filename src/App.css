@@ -21,7 +21,7 @@ canvas {
   cursor: grab;
 }
 
-.mirilla {
+.crosshair {
   position: absolute;
   top: 50%;
   left: 50%;
@@ -32,6 +32,20 @@ canvas {
   border-radius: 50%;
   z-index: 100;
   pointer-events: none;
+}
+
+.crosshair-loading {
+  border-style: dashed;
+  animation: girar 6s linear infinite;
+}
+
+@keyframes girar {
+  0% {
+    transform: translate(-50%, -50%) rotate(0deg);
+  }
+  100% {
+    transform: translate(-50%, -50%) rotate(360deg);
+  }
 }
 
 .mode {

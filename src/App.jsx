@@ -8,6 +8,7 @@ import Map3D from './components/3D/Map3D'
 import { Switch } from 'antd'
 import { Loader } from '@react-three/drei'
 import Loading from './components/3D/Loading'
+import Player3D from './components/3D/Player3D'
 
 function App() {
 
@@ -112,6 +113,15 @@ function App() {
     console.log('mode', mode)
   }, [mode])
 
+  const handleLoading = (isLoading) => {
+    if (isLoading) {
+      document.getElementById('crosshair').classList.add('crosshair-loading')
+    }
+    else {
+      document.getElementById('crosshair').classList.remove('crosshair-loading')
+    }
+  }
+
   return (
     <div className='app'>
       <div className='mode'>
@@ -121,19 +131,20 @@ function App() {
       {
         mode === '3D' ?
           <>
-            <div className='mirilla'></div>
+            <div id='crosshair' className='crosshair'></div>
             <Canvas>
               <Suspense fallback={<Loading />}>
                 <Map3D setPlaceID={setPlaceID} setCountry={setCountry} showInfo={() => setIsModalOpen(true)} />
               </Suspense>
             </Canvas>
             <Loader />
-            <Player
+            <Player3D
               info={activeStation}
               stations={activeStations}
               country={country}
               slideLeft={slideLeftActiveStation}
               slideRight={slideRightActiveStation}
+              handleLoading={handleLoading}
             />
           </>
           :

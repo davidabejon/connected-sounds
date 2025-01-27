@@ -156,6 +156,9 @@ function Map3D({ setPlaceID, setCountry, showInfo }) {
           targetPosition.current = target; // Establecer el destino
           setPlaceID(id);
           setCountry(country);
+
+          // move the camera to the selected point
+          targetPosition.current = menorDistancia.point;
         }
       }
 
@@ -170,9 +173,20 @@ function Map3D({ setPlaceID, setCountry, showInfo }) {
       }
       else {
         scene.rotation.y += 0.006;
-        // ir cambiando la rotación de la x para que se vea el planeta girando, según la función del seno
         scene.rotation.x = Math.sin(scene.rotation.y) * 0.5;
+      }
+    }
+    else if (targetPosition.current) {
+      camera.position.lerp(targetPosition.current, 0.1);
 
+      const projected = targetPosition.current.clone().project(camera);
+
+      const isCentered =
+        Math.abs(projected.x) < 0.01 &&
+        Math.abs(projected.y) < 0.01;
+
+      if (isCentered) {
+        targetPosition.current = null;
       }
     }
   })
@@ -182,7 +196,7 @@ function Map3D({ setPlaceID, setCountry, showInfo }) {
     <>
       <group onPointerDown={handleMouseDown} onPointerMove={handleMouseMove} onPointerUp={handleMouseUp}>
         {/* Tierra */}
-        <mesh rotation={[0, rotationAngleX, rotationAngleZ]}>
+        <mesh rotation={[0, rotationAngleX, rotationAngleZ]} name='earthMesh'>
           <sphereGeometry args={[radius, earth_detail, earth_detail]} />
           <meshStandardMaterial map={daymap} bumpMap={bump} bumpScale={100} />
         </mesh>
@@ -193,7 +207,7 @@ function Map3D({ setPlaceID, setCountry, showInfo }) {
           <meshStandardMaterial transparent opacity={0.2} map={cloudMap} />
         </mesh>
 
-        {/* Puntos en la Tierra usando BufferGeometry y Points */}
+        {/* Puntos en la Tierra */}
         {points.length > 0 && (
           <points name="pointsCloud">
             <bufferGeometry>
@@ -211,8 +225,8 @@ function Map3D({ setPlaceID, setCountry, showInfo }) {
         {/* Efectos de brillo */}
         <EffectComposer>
           <Bloom
-            intensity={0.5} // Ajusta la intensidad del brillo
-            luminanceThreshold={0.1} // Ajusta el umbral del brillo
+            intensity={0.5}
+            luminanceThreshold={0.1}
             luminanceSmoothing={1}
           />
         </EffectComposer>
@@ -237,7 +251,7 @@ function Map3D({ setPlaceID, setCountry, showInfo }) {
       {/* Fondo */}
       <color args={['black']} attach="background" />
 
-      {/* Estrellas: Colocarlas al final */}
+      {/* Estrellas */}
       {/* <Stars
         radius={100}
         depth={200}
