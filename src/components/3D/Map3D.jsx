@@ -23,7 +23,7 @@ function Map3D({ setPlaceID, setCountry, showInfo }) {
   const { camera, scene } = useThree(); // Para usar raycasting
   const raycaster = useRef(new THREE.Raycaster());
   const mouse = useRef(new THREE.Vector2());
-  const targetPosition = useRef(new THREE.Vector3()); // Guardar la posición objetivo de la cámara
+  const targetPosition = useRef(null); // Guardar la posición objetivo de la cámara
 
   useEffect(() => {
     const url = '/api' + '/ara/content/places';
@@ -54,19 +54,12 @@ function Map3D({ setPlaceID, setCountry, showInfo }) {
   useFrame(() => {
     if (controlsRef.current) {
       const distance = controlsRef.current.object.position.length();
-      if (distance > 3.2) {
-        setPointScale(0.01);
-        controlsRef.current.rotateSpeed = 0.5;
-      } else if (distance > 2.6) {
-        setPointScale(0.01);
-        controlsRef.current.rotateSpeed = 0.3;
-      } else if (distance > 2.4) {
-        setPointScale(0.005);
-        controlsRef.current.rotateSpeed = 0.2;
-      } else {
-        setPointScale(0.004);
-        controlsRef.current.rotateSpeed = 0.05;
+      controlsRef.current.rotateSpeed = distance > 3.2 ? 0.5 : distance > 2.6 ? 0.3 : distance > 2.4 ? 0.2 : 0.05;
+      var scale = distance * 0.0015;
+      if (distance > 3) {
+        scale = scale + distance * 0.0005;
       }
+      setPointScale(scale)
     }
   });
 

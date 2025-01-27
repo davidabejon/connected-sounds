@@ -9,6 +9,7 @@ import { Switch } from 'antd'
 import { Loader } from '@react-three/drei'
 import Loading from './components/3D/Loading'
 import Player3D from './components/3D/Player3D'
+import * as THREE from 'three'
 
 function App() {
 
@@ -110,15 +111,16 @@ function App() {
     var root = document.querySelector(':root');
     root.style.setProperty('--visibility', 'hidden');
     root.style.setProperty('--opacity', '0');
-    console.log('mode', mode)
   }, [mode])
 
   const handleLoading = (isLoading) => {
+    const crosshair = document.getElementById('crosshair')
     if (isLoading) {
-      document.getElementById('crosshair').classList.add('crosshair-loading')
+      crosshair.classList.add('crosshair-loading')
+      crosshair.classList.remove('showup')
     }
     else {
-      document.getElementById('crosshair').classList.remove('crosshair-loading')
+      crosshair.classList.remove('crosshair-loading')
     }
   }
 
@@ -131,7 +133,7 @@ function App() {
       {
         mode === '3D' ?
           <>
-            <div id='crosshair' className='crosshair'></div>
+            <div id='crosshair' className='showup crosshair'></div>
             <Canvas style={{ width: '100vw', height: '100vh' }}>
               <Suspense fallback={<Loading />}>
                 <Map3D setPlaceID={setPlaceID} setCountry={setCountry} showInfo={() => setIsModalOpen(true)} />

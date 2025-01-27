@@ -1,3 +1,10 @@
+.loading-container {
+    background-color: white;
+    padding: 1rem 2rem;
+    border-radius: 10px;
+    box-shadow: 8px 8px 0px rgba(255, 255, 255, 0.3);
+}
+
 .loading-container, .loading-text {
     display: flex;
     justify-content: center;
@@ -15,4 +22,5 @@
 
 .spin {
     transform: scale(1.5);
+    padding-right: 1rem;
 }

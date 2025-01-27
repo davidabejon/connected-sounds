@@ -4,7 +4,6 @@ import '../../styles/Loading.css'
 
 // Componente para mostrar el mensaje de carga
 const Loading = () => {
-  console.log('Loader')
   const { progress } = useProgress();
   return (
     <Html center>

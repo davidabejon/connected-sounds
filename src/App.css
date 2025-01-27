@@ -19,6 +19,23 @@ canvas {
   cursor: grab;
 }
 
+.showup {
+  animation: aparecer 14s linear;
+}
+
+@keyframes aparecer {
+  0% {
+    opacity: 0;
+  }
+  90% {
+    opacity: 0;
+  }
+  100% {
+    opacity: 1;
+  }
+  
+}
+
 .crosshair {
   position: absolute;
   top: 50%;
@@ -34,10 +51,10 @@ canvas {
 
 .crosshair-loading {
   border-style: dashed;
-  animation: girar 6s linear infinite;
+  animation: rotate 6s linear infinite;
 }
 
-@keyframes girar {
+@keyframes rotate {
   0% {
     transform: translate(-50%, -50%) rotate(0deg);
   }
