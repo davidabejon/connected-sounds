@@ -3,18 +3,27 @@ import { Spin } from "antd";
 import '../../styles/Loading.css'
 
 // Componente para mostrar el mensaje de carga
-const Loading = () => {
+const Loading = ({ radiosFetched }) => {
   const { progress } = useProgress();
   return (
     <Html center>
-      <div className="loading-container">
+      <div className="loading-container"
+      // style={{ background: `linear-gradient(90deg,rgb(106, 255, 148) ${progress}%, #f0f2f5 ${progress}%)` }}
+      >
         <div className="loading-text">
-          <p>Loading</p>
-          <p>{Math.round(progress)}%</p>
+          {
+            progress != 100 ?
+              <>
+                <p>Loading models</p>
+              </>
+              : !radiosFetched ?
+                <p>Loading radios</p>
+                : <p>Done!</p>
+          }
         </div>
         <Spin size="large" className="spin" />
       </div>
-    </Html>
+    </Html >
   );
 };
 

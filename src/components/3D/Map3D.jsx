@@ -10,7 +10,7 @@ const earth_detail = 48;
 const rotationAngleX = Math.PI - 0.0023;
 const rotationAngleZ = -0.001;
 
-function Map3D({ setPlaceID, setCountry, showInfo }) {
+function Map3D({ setPlaceID, setCountry, showInfo, setRadiosFetched }) {
 
   window.onmousedown = () => document.getElementsByTagName('canvas')[0].style.cursor = 'grabbing';
   window.onmouseup = () => document.getElementsByTagName('canvas')[0].style.cursor = 'grab';
@@ -20,26 +20,46 @@ function Map3D({ setPlaceID, setCountry, showInfo }) {
   const [points, setPoints] = useState([]);
   const [pointScale, setPointScale] = useState(0.005);
 
-  const { camera, scene } = useThree(); // Para usar raycasting
+  const { camera, scene } = useThree();
   const raycaster = useRef(new THREE.Raycaster());
   const mouse = useRef(new THREE.Vector2());
-  const targetPosition = useRef(null); // Guardar la posición objetivo de la cámara
+  const targetPosition = useRef(null);
+
+  const controlsRef = useRef();
+  const trackbackRef = useRef();
+
+  const [minZoom, setMinZoom] = useState(5);
+  const [zoomSpeed, setZoomSpeed] = useState(0.8);
+  const [materialOpacity, setMaterialOpacity] = useState(0);
+  const [materialOpacityClouds, setMaterialOpacityClouds] = useState(0);
 
   useEffect(() => {
-    const url = '/api' + '/ara/content/places';
-    fetch(url)
+    fetch('/api' + '/geo')
       .then((response) => response.json())
-      .then((allData) => {
-        // Extraer datos de latitudes, longitudes y demás información
-        const locations = allData.data.list.map((item) => ({
-          lat: item.geo[1],
-          lon: item.geo[0],
-          country: item.country,
-          place: item.title,
-          url: item.url,
-          id: item.id,
-        }));
-        setPoints(locations);
+      .then((response) => {
+
+        const lat = response.latitude;
+        const lon = response.longitude;
+        const [x, y, z] = geoTo3D(lat, lon, radius);
+        camera.position.set(x, y, z);
+        setMaterialOpacity(1);
+        setMaterialOpacityClouds(0.2);
+        fetch('/api' + '/ara/content/places')
+          .then((response) => response.json())
+          .then((response) => {
+
+            const locations = response.data.list.map((item) => ({
+              lat: item.geo[1],
+              lon: item.geo[0],
+              country: item.country,
+              place: item.title,
+              url: item.url,
+              id: item.id,
+            }));
+            setPoints(locations);
+            setRadiosFetched(true);
+
+          });
       });
   }, []);
 
@@ -49,12 +69,11 @@ function Map3D({ setPlaceID, setCountry, showInfo }) {
     'textures/elevation.jpg',
   ]);
 
-  const controlsRef = useRef();
-
   useFrame(() => {
     if (controlsRef.current) {
       const distance = controlsRef.current.object.position.length();
       controlsRef.current.rotateSpeed = distance > 3.2 ? 0.5 : distance > 2.6 ? 0.3 : distance > 2.4 ? 0.2 : 0.05;
+      setZoomSpeed(distance > 2.4 ? 0.8 : 0.1);
       var scale = distance * 0.0015;
       if (distance > 3) {
         scale = scale + distance * 0.0005;
@@ -163,10 +182,11 @@ function Map3D({ setPlaceID, setCountry, showInfo }) {
     if (startAnimation) {
       if (scene.rotation.y >= Math.PI * 2 && startAnimation) {
         setStartAnimation(false);
+        setMinZoom(2.15);
       }
       else {
-        scene.rotation.y += 0.006;
-        scene.rotation.x = Math.sin(scene.rotation.y) * 0.5;
+        scene.rotation.y += 0.004;
+        scene.rotation.x = Math.sin(scene.rotation.y) * 0.1;
       }
     }
     else if (targetPosition.current) {
@@ -191,13 +211,13 @@ function Map3D({ setPlaceID, setCountry, showInfo }) {
         {/* Tierra */}
         <mesh rotation={[0, rotationAngleX, rotationAngleZ]} name='earthMesh'>
           <sphereGeometry args={[radius, earth_detail, earth_detail]} />
-          <meshStandardMaterial map={daymap} bumpMap={bump} bumpScale={100} />
+          <meshStandardMaterial transparent map={daymap} bumpMap={bump} bumpScale={100} opacity={materialOpacity} />
         </mesh>
 
         {/* Nubes */}
         <mesh scale={1.01}>
           <sphereGeometry args={[radius, earth_detail, earth_detail]} />
-          <meshStandardMaterial transparent opacity={0.2} map={cloudMap} />
+          <meshStandardMaterial transparent opacity={materialOpacityClouds} map={cloudMap} />
         </mesh>
 
         {/* Puntos en la Tierra */}
@@ -232,14 +252,14 @@ function Map3D({ setPlaceID, setCountry, showInfo }) {
       {/* Controles */}
       <OrbitControls
         ref={controlsRef}
-        minDistance={2.3}
+        minDistance={minZoom}
         maxDistance={6}
         enablePan={false}
         enableZoom={false}
         enableRotate={!startAnimation}
       />
 
-      <TrackballControls noRotate noPan zoomSpeed={0.8} noZoom={startAnimation} />
+      <TrackballControls ref={trackbackRef} noRotate noPan zoomSpeed={zoomSpeed} noZoom={startAnimation} />
 
       {/* Fondo */}
       <color args={['black']} attach="background" />

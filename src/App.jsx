@@ -22,6 +22,8 @@ function App() {
 
   const [isModalOpen, setIsModalOpen] = useState(false)
 
+  const [radiosFetched, setRadiosFetched] = useState(false)
+
   const slideRightActiveStation = () => {
     let index = activeStations.findIndex(station => station.page.title === activeStation.title)
     if (index === activeStations.length - 1) {
@@ -135,8 +137,13 @@ function App() {
           <>
             <div id='crosshair' className='showup crosshair'></div>
             <Canvas style={{ width: '100vw', height: '100vh' }}>
-              <Suspense fallback={<Loading />}>
-                <Map3D setPlaceID={setPlaceID} setCountry={setCountry} showInfo={() => setIsModalOpen(true)} />
+              <Suspense fallback={<Loading radiosFetched={radiosFetched} />}>
+                <Map3D
+                  setPlaceID={setPlaceID}
+                  setCountry={setCountry}
+                  showInfo={() => setIsModalOpen(true)}
+                  setRadiosFetched={setRadiosFetched}
+                />
               </Suspense>
             </Canvas>
             <Loader />

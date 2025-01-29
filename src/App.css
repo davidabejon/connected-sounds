@@ -20,7 +20,7 @@ canvas {
 }
 
 .showup {
-  animation: aparecer 14s linear;
+  animation: aparecer 22s linear;
 }
 
 @keyframes aparecer {
