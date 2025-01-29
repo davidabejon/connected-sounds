@@ -11,5 +11,14 @@
   <body>
     <div id="root"></div>
     <script type="module" src="/src/main.jsx"></script>
+    <script>
+      // Hide the preloader once the main content has loaded
+      window.addEventListener("load", function () {
+        const preloader = document.getElementById("preloader");
+        if (preloader) {
+          preloader.style.display = "none";
+        }
+      });
+    </script>
   </body>
 </html>
