@@ -115,8 +115,20 @@ function Player3D({ info, stations, country, slideRight, slideLeft, handleLoadin
   }
 
   useEffect(() => {
+    if (loading) {
+      document.getElementById('crosshair').style.borderColor = 'white'
+    }
+    else if (failedToLoad) {
+      deselectFavicon()
+      document.getElementById('crosshair').style.borderColor = 'red'
+    } else {
+      document.getElementById('crosshair').style.borderColor = '#ffe78f'
+    }
     handleLoading(loading)
-  }, [loading])
+  }, [loading, failedToLoad])
+
+  useEffect(() => {
+  }, [failedToLoad])
 
   return (
     <div className='player'>

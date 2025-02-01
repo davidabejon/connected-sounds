@@ -1,5 +1,5 @@
-import { OrbitControls, Stars, TrackballControls, useTexture } from '@react-three/drei';
-import { useFrame, useThree } from '@react-three/fiber';
+import { OrbitControls, Stars, TrackballControls, useKTX2, useTexture } from '@react-three/drei';
+import { useFrame, useLoader, useThree } from '@react-three/fiber';
 import { Bloom, EffectComposer } from '@react-three/postprocessing';
 import { useEffect, useRef, useState } from 'react';
 import * as THREE from 'three';
@@ -9,6 +9,8 @@ const radius = 2;
 const earth_detail = 48;
 const rotationAngleX = Math.PI - 0.0023;
 const rotationAngleZ = -0.001;
+const defaultColor = new THREE.Color("gold");
+const clickedColor = new THREE.Color("yellow").multiplyScalar(8);
 
 function Map3D({ setPlaceID, setCountry, showInfo, setRadiosFetched }) {
 
@@ -64,7 +66,7 @@ function Map3D({ setPlaceID, setCountry, showInfo, setRadiosFetched }) {
   }, []);
 
   const [daymap, cloudMap, bump] = useTexture([
-    'textures/8k_earth_daymap.jpg',
+    'textures/8081_earthmap10k.jpg',
     'textures/8k_earth_clouds.jpg',
     'textures/elevation.jpg',
   ]);
@@ -84,6 +86,12 @@ function Map3D({ setPlaceID, setCountry, showInfo, setRadiosFetched }) {
 
   // Crear los atributos de los puntos
   const positions = new Float32Array(points.length * 3);
+  const colors = new Float32Array(points.length * 3); // Each color has 3 components (r, g, b)
+  for (let i = 0; i < points.length; i++) {
+    colors[i * 3] = defaultColor.r; // Red component
+    colors[i * 3 + 1] = defaultColor.g; // Green component
+    colors[i * 3 + 2] = defaultColor.b; // Blue component
+  }
   const metadata = []; // Guardar la información asociada a cada punto
 
   points.forEach((point, index) => {
@@ -148,34 +156,38 @@ function Map3D({ setPlaceID, setCountry, showInfo, setRadiosFetched }) {
       mouse.current.x = ((event.clientX - left) / width) * 2 - 1;
       mouse.current.y = -((event.clientY - top) / height) * 2 + 1;
 
-      // raycaster.current.near = 0.1;
-      // raycaster.current.far = 1; 
       raycaster.current.setFromCamera(mouse.current, camera);
 
       const intersects = raycaster.current.intersectObject(scene.getObjectByName('pointsCloud'), true);
 
       if (intersects.length > 0) {
-
         const validIntersections = intersects.filter((i) => i.distanceToRay < MAX_DISTANCE && i.distance < 3);
 
         if (validIntersections.length > 0) {
           // obtener intersection con menor distancia distanceToRay
-          const menorDistancia = validIntersections.reduce((prev, current) =>
+          const closestIntersection = validIntersections.reduce((prev, current) =>
             prev.distanceToRay < current.distanceToRay ? prev : current
           );
-          const { lat, lon, place, country, url, id } = metadata[menorDistancia.index];
-          const target = new THREE.Vector3(menorDistancia.point.x, menorDistancia.point.y, menorDistancia.point.z);
-          targetPosition.current = target; // Establecer el destino
+          const { lat, lon, place, country, url, id } = metadata[closestIntersection.index];
+          const [x, y, z] = geoTo3D(lat, lon, radius);
           setPlaceID(id);
           setCountry(country);
 
           // move the camera to the selected point
-          targetPosition.current = menorDistancia.point;
+          targetPosition.current = new THREE.Vector3(x, y, z);
+
+          // Change the color of the clicked point
+          const index = closestIntersection.index;
+          colors[index * 3] = clickedColor.r; // Red component
+          colors[index * 3 + 1] = clickedColor.g; // Green component
+          colors[index * 3 + 2] = clickedColor.b; // Blue component
+
+          // Update the color attribute in the buffer geometry
+          const pointsCloud = scene.getObjectByName('pointsCloud');
+          pointsCloud.geometry.attributes.color.needsUpdate = true;
         }
       }
-
     }
-
   };
 
   useFrame(() => {
@@ -190,20 +202,25 @@ function Map3D({ setPlaceID, setCountry, showInfo, setRadiosFetched }) {
       }
     }
     else if (targetPosition.current) {
-      camera.position.lerp(targetPosition.current, 0.1);
+      const distanceToTarget = camera.position.distanceTo(targetPosition.current);
+      const minSpeed = 0.05;
+      const maxSpeed = 0.1;
+      const dampingFactor = THREE.MathUtils.clamp(distanceToTarget * 0.5, minSpeed, maxSpeed);
+      camera.position.lerp(targetPosition.current, dampingFactor);
 
       const projected = targetPosition.current.clone().project(camera);
+      // camera.lookAt(targetPosition.current);
 
       const isCentered =
-        Math.abs(projected.x) < 0.01 &&
-        Math.abs(projected.y) < 0.01;
+        Math.abs(projected.x) < 0.005 &&
+        Math.abs(projected.y) < 0.005;
 
       if (isCentered) {
         targetPosition.current = null;
+        camera.lookAt(0, 0, 0);
       }
     }
   })
-
 
   return (
     <>
@@ -230,8 +247,14 @@ function Map3D({ setPlaceID, setCountry, showInfo, setRadiosFetched }) {
                 count={points.length}
                 itemSize={3}
               />
+              <bufferAttribute
+                attach="attributes-color"
+                array={colors}
+                count={points.length}
+                itemSize={3}
+              />
             </bufferGeometry>
-            <pointsMaterial size={pointScale} color="gold" />
+            <pointsMaterial size={pointScale} vertexColors={true} />
           </points>
         )}
 
