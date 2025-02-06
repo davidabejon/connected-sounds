@@ -34,6 +34,7 @@ function Map3D({ setPlaceID, setCountry, showInfo, setRadiosFetched }) {
   const [zoomSpeed, setZoomSpeed] = useState(0.8);
   const [materialOpacity, setMaterialOpacity] = useState(0);
   const [materialOpacityClouds, setMaterialOpacityClouds] = useState(0);
+  const [ambientLightIntensity, setAmbientLightIntensity] = useState(1);
 
   useEffect(() => {
     fetch('/api' + '/geo')
@@ -197,6 +198,9 @@ function Map3D({ setPlaceID, setCountry, showInfo, setRadiosFetched }) {
         setMinZoom(2.15);
       }
       else {
+        if (ambientLightIntensity < 3) {
+          setAmbientLightIntensity(ambientLightIntensity + 0.005);
+        }
         scene.rotation.y += 0.004;
         scene.rotation.x = Math.sin(scene.rotation.y) * 0.1;
       }
@@ -269,8 +273,9 @@ function Map3D({ setPlaceID, setCountry, showInfo, setRadiosFetched }) {
       </group>
 
       {/* Luz */}
-      <ambientLight intensity={4} />
-      <pointLight intensity={60} position={[3, 3, 3]} />
+      <ambientLight intensity={ambientLightIntensity} />
+      <pointLight intensity={60} position={[0, 0, 6]} />
+      <pointLight intensity={60} position={[0, 0, -6]} />
 
       {/* Controles */}
       <OrbitControls
