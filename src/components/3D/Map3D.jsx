@@ -1,5 +1,5 @@
-import { OrbitControls, Stars, TrackballControls, useKTX2, useTexture } from '@react-three/drei';
-import { useFrame, useLoader, useThree } from '@react-three/fiber';
+import { OrbitControls, Stars, TrackballControls, useTexture } from '@react-three/drei';
+import { useFrame, useThree } from '@react-three/fiber';
 import { Bloom, EffectComposer } from '@react-three/postprocessing';
 import { useEffect, useRef, useState } from 'react';
 import * as THREE from 'three';
@@ -9,10 +9,11 @@ const radius = 2;
 const earth_detail = 48;
 const rotationAngleX = Math.PI - 0.0023;
 const rotationAngleZ = -0.001;
-const defaultColor = new THREE.Color("gold");
-const clickedColor = new THREE.Color("yellow").multiplyScalar(8);
 
-function Map3D({ setPlaceID, setCountry, showInfo, setRadiosFetched }) {
+function Map3D({ setPlaceID, setCountry, showInfo, setRadiosFetched, pointColor, isVisibleStars }) {
+
+  const defaultColor = new THREE.Color(pointColor);
+  const clickedColor = new THREE.Color(pointColor).multiplyScalar(8);
 
   window.onmousedown = () => document.getElementsByTagName('canvas')[0].style.cursor = 'grabbing';
   window.onmouseup = () => document.getElementsByTagName('canvas')[0].style.cursor = 'grab';
@@ -226,6 +227,13 @@ function Map3D({ setPlaceID, setCountry, showInfo, setRadiosFetched }) {
     }
   })
 
+  useEffect(() => {
+    const pointsCloud = scene.getObjectByName('pointsCloud');
+    if (pointsCloud != undefined) {
+      pointsCloud.geometry.attributes.color.needsUpdate = true;
+    }
+  }, [pointColor]);
+
   return (
     <>
       <group onPointerDown={handleMouseDown} onPointerMove={handleMouseMove} onPointerUp={handleMouseUp}>
@@ -293,16 +301,18 @@ function Map3D({ setPlaceID, setCountry, showInfo, setRadiosFetched }) {
       <color args={['black']} attach="background" />
 
       {/* Estrellas */}
-      {/* <Stars
-        radius={100}
-        depth={200}
-        count={5000}
-        factor={6}
-        saturation={0}
-        color="green"
-        fade
-        speed={1}
-      /> */}
+      {
+        isVisibleStars &&
+        <Stars
+          radius={100}
+          depth={200}
+          count={5000}
+          factor={6}
+          saturation={0}
+          fade
+          speed={1}
+        />
+      }
     </>
   );
 }

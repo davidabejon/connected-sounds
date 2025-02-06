@@ -9,7 +9,7 @@ import { Switch } from 'antd'
 import { Loader } from '@react-three/drei'
 import Loading from './components/3D/Loading'
 import Player3D from './components/3D/Player3D'
-import * as THREE from 'three'
+import Settings from './components/3D/Settings'
 
 function App() {
 
@@ -23,6 +23,9 @@ function App() {
   const [isModalOpen, setIsModalOpen] = useState(false)
 
   const [radiosFetched, setRadiosFetched] = useState(false)
+
+  const [pointColor, setPointColor] = useState('#FFD700')
+  const [isVisibleStars, setIsVisibleStars] = useState(false)
 
   const slideRightActiveStation = () => {
     let index = activeStations.findIndex(station => station.page.title === activeStation.title)
@@ -143,6 +146,8 @@ function App() {
                   setCountry={setCountry}
                   showInfo={() => setIsModalOpen(true)}
                   setRadiosFetched={setRadiosFetched}
+                  pointColor={pointColor}
+                  isVisibleStars={isVisibleStars}
                 />
               </Suspense>
             </Canvas>
@@ -154,6 +159,12 @@ function App() {
               slideLeft={slideLeftActiveStation}
               slideRight={slideRightActiveStation}
               handleLoading={handleLoading}
+            />
+            <Settings
+              showInfo={() => setIsModalOpen(true)}
+              pointColor={pointColor}
+              setPointColor={setPointColor}
+              setIsVisibleStars={setIsVisibleStars}
             />
           </>
           :
