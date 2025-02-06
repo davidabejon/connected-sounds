@@ -1,6 +1,6 @@
 import { OrbitControls, Stars, TrackballControls, useTexture } from '@react-three/drei';
 import { useFrame, useThree } from '@react-three/fiber';
-import { Bloom, EffectComposer } from '@react-three/postprocessing';
+import { Bloom, ColorAverage, DotScreen, EffectComposer, Glitch, Grid, Noise, Pixelation, Scanline, Vignette } from '@react-three/postprocessing';
 import { useEffect, useRef, useState } from 'react';
 import * as THREE from 'three';
 import { geoTo3D } from '../../utilities';
@@ -36,6 +36,14 @@ function Map3D({ setPlaceID, setCountry, showInfo, setRadiosFetched, pointColor,
   const [materialOpacity, setMaterialOpacity] = useState(0);
   const [materialOpacityClouds, setMaterialOpacityClouds] = useState(0);
   const [ambientLightIntensity, setAmbientLightIntensity] = useState(1);
+
+  const [isNoise, setIsNoise] = useState(false);
+  const [isGlitch, setIsGlitch] = useState(false);
+  const [isPixelation, setIsPixelation] = useState(false);
+  const [isColorAverage, setIsColorAverage] = useState(false);
+  const [isDotScreen, setIsDotScreen] = useState(false);
+  const [isScanline, setIsScanline] = useState(false);
+  const [isGrid, setIsGrid] = useState(false);
 
   useEffect(() => {
     fetch('/api' + '/geo')
@@ -272,11 +280,26 @@ function Map3D({ setPlaceID, setCountry, showInfo, setRadiosFetched, pointColor,
 
         {/* Efectos de brillo */}
         <EffectComposer>
+          {isNoise && <Noise opacity={0.1} />}
+          {isGlitch && <Glitch delay={[1, 1]} duration={[0.1, 0.5]} strength={[0.3, 0.6]} active ratio={0.85} />}
+          {isPixelation && <Pixelation granularity={5} />}
+          {isColorAverage && <ColorAverage />}
+          {isDotScreen && <DotScreen angle={Math.PI * 0.5} scale={1.0} />}
+          {isScanline && <Scanline density={2} />}
+          {isGrid && <Grid scale={1.0} lineWidth={0.0} />}
           <Bloom
             intensity={0.5}
             luminanceThreshold={0.1}
             luminanceSmoothing={1}
           />
+          {
+            isVisibleStars &&
+            <Vignette
+              offset={.3} // vignette offset
+              darkness={0.2} // vignette darkness
+              eskil={true} // Eskil's vignette technique
+            />
+          }
         </EffectComposer>
       </group>
 
