@@ -203,6 +203,10 @@ function Map3D({ setPlaceID, setCountry, showInfo, setRadiosFetched, pointColor,
       if (scene.rotation.y >= Math.PI * 2 && startAnimation) {
         setStartAnimation(false);
         setMinZoom(2.15);
+        // shift everything up a bit
+        // without using scene
+        camera.position.y = 0.5;
+        
       }
       else {
         if (ambientLightIntensity < 3) {
