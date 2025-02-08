@@ -10,15 +10,13 @@ const earth_detail = 48;
 const rotationAngleX = Math.PI - 0.0023;
 const rotationAngleZ = -0.001;
 
-function Map3D({ setPlaceID, setCountry, showInfo, setRadiosFetched, pointColor, isVisibleStars }) {
+function Map3D({ setPlaceID, setCountry, showInfo, setRadiosFetched, pointColor, isVisibleStars, startAnimation, setStartAnimation }) {
 
   const defaultColor = new THREE.Color(pointColor);
   const clickedColor = new THREE.Color(pointColor).multiplyScalar(8);
 
   window.onmousedown = () => document.getElementsByTagName('canvas')[0].style.cursor = 'grabbing';
   window.onmouseup = () => document.getElementsByTagName('canvas')[0].style.cursor = 'grab';
-
-  const [startAnimation, setStartAnimation] = useState(true);
 
   const [points, setPoints] = useState([]);
   const [pointScale, setPointScale] = useState(0.005);

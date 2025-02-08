@@ -10,6 +10,7 @@ import { Loader } from '@react-three/drei'
 import Loading from './components/3D/Loading'
 import Player3D from './components/3D/Player3D'
 import Settings from './components/3D/Settings'
+import Spaceship from './components/3D/Spaceship'
 
 function App() {
 
@@ -26,6 +27,7 @@ function App() {
 
   const [pointColor, setPointColor] = useState('#FFD700')
   const [isVisibleStars, setIsVisibleStars] = useState(false)
+  const [startAnimation, setStartAnimation] = useState(true)
 
   const slideRightActiveStation = () => {
     let index = activeStations.findIndex(station => station.page.title === activeStation.title)
@@ -148,6 +150,11 @@ function App() {
                   setRadiosFetched={setRadiosFetched}
                   pointColor={pointColor}
                   isVisibleStars={isVisibleStars}
+                  startAnimation={startAnimation}
+                  setStartAnimation={setStartAnimation}
+                />
+                <Spaceship
+                  startAnimation={startAnimation}
                 />
               </Suspense>
             </Canvas>
