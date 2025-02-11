@@ -92,15 +92,14 @@ function Map3D({ setPlaceID, setCountry, showInfo, setRadiosFetched, pointColor,
     }
   });
 
-  // Crear los atributos de los puntos
   const positions = new Float32Array(points.length * 3);
-  const colors = new Float32Array(points.length * 3); // Each color has 3 components (r, g, b)
+  const colors = new Float32Array(points.length * 3); // r, g, b
   for (let i = 0; i < points.length; i++) {
-    colors[i * 3] = defaultColor.r; // Red component
-    colors[i * 3 + 1] = defaultColor.g; // Green component
-    colors[i * 3 + 2] = defaultColor.b; // Blue component
+    colors[i * 3] = defaultColor.r;
+    colors[i * 3 + 1] = defaultColor.g;
+    colors[i * 3 + 2] = defaultColor.b;
   }
-  const metadata = []; // Guardar la información asociada a cada punto
+  const metadata = [];
 
   points.forEach((point, index) => {
     const [x, y, z] = geoTo3D(point.lat, point.lon, radius);
@@ -114,7 +113,7 @@ function Map3D({ setPlaceID, setCountry, showInfo, setRadiosFetched, pointColor,
     });
   });
 
-  // función que detecta si el click es un click individual o un drag
+  // handle mouse events
   const [dragging, setDragging] = useState(false);
   const [startX, setStartX] = useState(0);
   const [startY, setStartY] = useState(0);
@@ -145,8 +144,7 @@ function Map3D({ setPlaceID, setCountry, showInfo, setRadiosFetched, pointColor,
 
     if (!dragging) {
 
-      // Calcular el nivel de zoom
-      var MAX_DISTANCE; // Ajustar proporcionalmente al zoom
+      var MAX_DISTANCE; // max distance to detect a click on a point
       const distance = controlsRef.current.object.position.length();
       if (distance > 3.2) {
         MAX_DISTANCE = (0.04);
@@ -172,7 +170,6 @@ function Map3D({ setPlaceID, setCountry, showInfo, setRadiosFetched, pointColor,
         const validIntersections = intersects.filter((i) => i.distanceToRay < MAX_DISTANCE && i.distance < 3);
 
         if (validIntersections.length > 0) {
-          // obtener intersection con menor distancia distanceToRay
           const closestIntersection = validIntersections.reduce((prev, current) =>
             prev.distanceToRay < current.distanceToRay ? prev : current
           );
@@ -181,16 +178,13 @@ function Map3D({ setPlaceID, setCountry, showInfo, setRadiosFetched, pointColor,
           setPlaceID(id);
           setCountry(country);
 
-          // move the camera to the selected point
           targetPosition.current = new THREE.Vector3(x, y, z);
 
-          // Change the color of the clicked point
           const index = closestIntersection.index;
-          colors[index * 3] = clickedColor.r; // Red component
-          colors[index * 3 + 1] = clickedColor.g; // Green component
-          colors[index * 3 + 2] = clickedColor.b; // Blue component
+          colors[index * 3] = clickedColor.r;
+          colors[index * 3 + 1] = clickedColor.g;
+          colors[index * 3 + 2] = clickedColor.b;
 
-          // Update the color attribute in the buffer geometry
           const pointsCloud = scene.getObjectByName('pointsCloud');
           pointsCloud.geometry.attributes.color.needsUpdate = true;
         }
@@ -203,10 +197,6 @@ function Map3D({ setPlaceID, setCountry, showInfo, setRadiosFetched, pointColor,
       if (scene.rotation.y >= Math.PI * 2 && startAnimation) {
         setStartAnimation(false);
         setMinZoom(2.15);
-        // shift everything up a bit
-        // without using scene
-        camera.position.y = 0.5;
-        
       }
       else {
         if (ambientLightIntensity < 3) {
@@ -224,7 +214,6 @@ function Map3D({ setPlaceID, setCountry, showInfo, setRadiosFetched, pointColor,
       camera.position.lerp(targetPosition.current, dampingFactor);
 
       const projected = targetPosition.current.clone().project(camera);
-      // camera.lookAt(targetPosition.current);
 
       const isCentered =
         Math.abs(projected.x) < 0.005 &&
