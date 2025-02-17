@@ -165,8 +165,9 @@ function Map3D({ setPlaceID, setCountry, showInfo, setRadiosFetched, pointColor,
       raycaster.current.setFromCamera(mouse.current, camera);
 
       const intersects = raycaster.current.intersectObject(scene.getObjectByName('pointsCloud'), true);
+      const intersectsSpaceship = raycaster.current.intersectObject(scene.getObjectByName('spaceship'), true);
 
-      if (intersects.length > 0) {
+      if (intersects.length > 0 && intersectsSpaceship.length <= 0) {
         const validIntersections = intersects.filter((i) => i.distanceToRay < MAX_DISTANCE && i.distance < 3);
 
         if (validIntersections.length > 0) {

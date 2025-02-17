@@ -31,6 +31,8 @@ const Spaceship = ({ startAnimation }) => {
     audio.volume = 0.2;
     audio.play();
 
+    document.getElementsByTagName('canvas')[0].style.cursor = 'pointer';
+
     // // Simulate the "press" by returning to normal after a short delay
     // setTimeout(() => {
     //   const resetPressedState = [...newPressedState];
@@ -49,13 +51,11 @@ const Spaceship = ({ startAnimation }) => {
         dashboardRef.material.transparent = true;
         dashboardRef.position.copy(camera.position);
         dashboardRef.quaternion.copy(camera.quaternion);
-        dashboardRef.translateZ(-0.31);  // Adjust position relative to the camera
+        dashboardRef.translateZ(-0.31);
         dashboardRef.translateY(-0.45);
 
         if (index % 3 === 0) {
           dashboardRef.translateX(-0.55)
-          // rotate slightly
-          // dashboardRef.rotateZ(-3)
         }
         else if (index % 3 === 1) {
           dashboardRef.translateX(0.55)
@@ -130,42 +130,47 @@ const Spaceship = ({ startAnimation }) => {
         />
       </mesh>
 
-      {/* Buttons */}
-      <group>
+      <group name='spaceship'>
+        {/* Buttons */}
         {
           buttonColors.map((color, index) => (
-            <mesh ref={(el) => (buttonRefs.current[index] = el)} onClick={() => handleButtonClick(index)}>
+            <mesh
+              ref={(el) => (buttonRefs.current[index] = el)}
+              onClick={() => handleButtonClick(index)}
+              onPointerEnter={() => document.getElementsByTagName('canvas')[0].style.cursor = 'pointer'}
+              onPointerLeave={() => document.getElementsByTagName('canvas')[0].style.cursor = 'grab'}
+            >
               <cylinderGeometry args={[0.03, 0.03, 0.05, 32]} />
               <meshStandardMaterial color={color} />
             </mesh>
           ))
         }
-      </group>
 
-      {/* Dashboard */}
-      {
-        dashboardSizes.map((data, index) => (
-          <>
-            <mesh ref={(el) => (dashboardRefs.current[index] = el)} >
-              {data.type === 'circle' ? <circleGeometry args={data.size} /> : <planeGeometry args={data.size} />}
-              <meshBasicMaterial
-                color="#aaa"
-                depthWrite={false}
-                depthTest={false}
-              />
-            </mesh>
-            {/* shadow */}
-            <mesh ref={(el) => (dashboardRefs.current[index + 3] = el)} >
-              {data.type === 'circle' ? <circleGeometry args={data.size} /> : <planeGeometry args={data.size} />}
-              <meshBasicMaterial
-                color="#6b6b6b"
-                depthWrite={false}
-                depthTest={false}
-              />
-            </mesh>
-          </>
-        ))
-      }
+        {/* Dashboard */}
+        {
+          dashboardSizes.map((data, index) => (
+            <>
+              <mesh ref={(el) => (dashboardRefs.current[index] = el)} >
+                {data.type === 'circle' ? <circleGeometry args={data.size} /> : <planeGeometry args={data.size} />}
+                <meshBasicMaterial
+                  color="#aaa"
+                  depthWrite={false}
+                  depthTest={false}
+                />
+              </mesh>
+              {/* shadow */}
+              <mesh ref={(el) => (dashboardRefs.current[index + 3] = el)} >
+                {data.type === 'circle' ? <circleGeometry args={data.size} /> : <planeGeometry args={data.size} />}
+                <meshBasicMaterial
+                  color="#6b6b6b"
+                  depthWrite={false}
+                  depthTest={false}
+                />
+              </mesh>
+            </>
+          ))
+        }
+      </group>
 
       {/* point light */}
       <pointLight ref={pointLightRef} intensity={.8} />
