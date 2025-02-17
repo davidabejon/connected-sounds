@@ -1,39 +1,75 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { useFrame } from '@react-three/fiber';
+import buttonPushSound from '../../assets/sounds/button_push.wav';
+import buttonPullSound from '../../assets/sounds/button_pull.wav';
+
+const buttonColors = ['orange', 'red', 'blue', 'green'];
+const dashboardSizes = [
+  { type: 'circle', size: [0.5, 64] },
+  { type: 'circle', size: [0.5, 64] },
+  { type: 'rectangle', size: [1, 0.5] },
+];
 
 const Spaceship = ({ startAnimation }) => {
-  const meshRef = useRef(null);
-  const glassRef = useRef(null);
+  const dashboardRefs = useRef([]);
   const buttonRefs = useRef([]);
+  const glassRef = useRef(null);
+  const pointLightRef = useRef(null);
   const [pressed, setPressed] = useState([false, false, false, false]);
   const [opacity, setOpacity] = useState(0);
   const [glassOpacity, setGlassOpacity] = useState(0);
 
-  // Handle interaction with the buttons
   const handleButtonClick = (buttonIndex) => {
-    console.log(`Button clicked: ${buttonIndex}`);
-    // Mark the button as pressed
+
+    const isPressed = pressed[buttonIndex];
     const newPressedState = [...pressed];
-    newPressedState[buttonIndex] = true;
+    newPressedState[buttonIndex] = !isPressed;
     setPressed(newPressedState);
 
-    // Simulate the "press" by returning to normal after a short delay
-    setTimeout(() => {
-      const resetPressedState = [...newPressedState];
-      resetPressedState[buttonIndex] = false;
-      setPressed(resetPressedState);
-    }, 200); // 200ms to simulate button press time
+    // sound when button is clicked
+    const audio = new Audio(isPressed ? buttonPullSound : buttonPushSound);
+    audio.volume = 0.2;
+    audio.play();
+
+    // // Simulate the "press" by returning to normal after a short delay
+    // setTimeout(() => {
+    //   const resetPressedState = [...newPressedState];
+    //   resetPressedState[buttonIndex] = false;
+    //   setPressed(resetPressedState);
+    // }, 200); // 200ms to simulate button press time
   };
 
   // Keep the mesh, glass, and buttons in front of the camera
   useFrame(({ camera }) => {
-    if (meshRef.current) {
-      meshRef.current.position.copy(camera.position);
-      meshRef.current.quaternion.copy(camera.quaternion);
-      meshRef.current.translateZ(-0.2);  // Adjust position relative to the camera
-      meshRef.current.translateY(-0.18);
-      meshRef.current.rotateX(0.3);
-    }
+    dashboardRefs.current.forEach((dashboardRef, index) => {
+      if (dashboardRef) {
+        dashboardRef.material.depthWrite = false;
+        dashboardRef.material.depthTest = false;
+        dashboardRef.material.opacity = opacity;
+        dashboardRef.material.transparent = true;
+        dashboardRef.position.copy(camera.position);
+        dashboardRef.quaternion.copy(camera.quaternion);
+        dashboardRef.translateZ(-0.31);  // Adjust position relative to the camera
+        dashboardRef.translateY(-0.45);
+
+        if (index % 3 === 0) {
+          dashboardRef.translateX(-0.55)
+          // rotate slightly
+          // dashboardRef.rotateZ(-3)
+        }
+        else if (index % 3 === 1) {
+          dashboardRef.translateX(0.55)
+        }
+        else if (index % 3 === 2) {
+          dashboardRef.translateY(0.05)
+        }
+
+        if (index > 2) {
+          dashboardRef.translateZ(-0.01)
+          dashboardRef.translateY(0.015)
+        }
+      }
+    });
 
     if (glassRef.current) {
       glassRef.current.position.copy(camera.position);
@@ -43,11 +79,17 @@ const Spaceship = ({ startAnimation }) => {
       glassRef.current.rotateX(0.3);
     }
 
+    if (pointLightRef.current) {
+      pointLightRef.current.position.copy(camera.position);
+      pointLightRef.current.quaternion.copy(camera.quaternion);
+      pointLightRef.current.translateZ(0.3);
+    }
+
     buttonRefs.current.forEach((buttonRef, index) => {
       if (buttonRef) {
         buttonRef.material.transparent = true;
         buttonRef.material.depthWrite = false;
-        buttonRef.material.depthTest = false; 
+        buttonRef.material.depthTest = false;
         buttonRef.material.opacity = opacity;
 
         buttonRef.position.copy(camera.position);
@@ -90,23 +132,44 @@ const Spaceship = ({ startAnimation }) => {
 
       {/* Buttons */}
       <group>
-        <mesh ref={(el) => (buttonRefs.current[0] = el)} onClick={() => handleButtonClick(0)}>
-          <cylinderGeometry args={[0.03, 0.03, 0.05, 32]} />
-          <meshStandardMaterial color="orange" />
-        </mesh>
-        <mesh ref={(el) => (buttonRefs.current[1] = el)} onClick={() => handleButtonClick(1)}>
-          <cylinderGeometry args={[0.03, 0.03, 0.05, 32]} />
-          <meshStandardMaterial color="red" />
-        </mesh>
-        <mesh ref={(el) => (buttonRefs.current[2] = el)} onClick={() => handleButtonClick(2)}>
-          <cylinderGeometry args={[0.03, 0.03, 0.05, 32]} />
-          <meshStandardMaterial color="blue" />
-        </mesh>
-        <mesh ref={(el) => (buttonRefs.current[3] = el)} onClick={() => handleButtonClick(3)}>
-          <cylinderGeometry args={[0.03, 0.03, 0.05, 32]} />
-          <meshStandardMaterial color="green" />
-        </mesh>
+        {
+          buttonColors.map((color, index) => (
+            <mesh ref={(el) => (buttonRefs.current[index] = el)} onClick={() => handleButtonClick(index)}>
+              <cylinderGeometry args={[0.03, 0.03, 0.05, 32]} />
+              <meshStandardMaterial color={color} />
+            </mesh>
+          ))
+        }
       </group>
+
+      {/* Dashboard */}
+      {
+        dashboardSizes.map((data, index) => (
+          <>
+            <mesh ref={(el) => (dashboardRefs.current[index] = el)} >
+              {data.type === 'circle' ? <circleGeometry args={data.size} /> : <planeGeometry args={data.size} />}
+              <meshBasicMaterial
+                color="#aaa"
+                depthWrite={false}
+                depthTest={false}
+              />
+            </mesh>
+            {/* shadow */}
+            <mesh ref={(el) => (dashboardRefs.current[index + 3] = el)} >
+              {data.type === 'circle' ? <circleGeometry args={data.size} /> : <planeGeometry args={data.size} />}
+              <meshBasicMaterial
+                color="#6b6b6b"
+                depthWrite={false}
+                depthTest={false}
+              />
+            </mesh>
+          </>
+        ))
+      }
+
+      {/* point light */}
+      <pointLight ref={pointLightRef} intensity={.8} />
+
     </group>
   );
 };

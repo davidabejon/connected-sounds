@@ -33,7 +33,7 @@ function Map3D({ setPlaceID, setCountry, showInfo, setRadiosFetched, pointColor,
   const [zoomSpeed, setZoomSpeed] = useState(0.8);
   const [materialOpacity, setMaterialOpacity] = useState(0);
   const [materialOpacityClouds, setMaterialOpacityClouds] = useState(0);
-  const [ambientLightIntensity, setAmbientLightIntensity] = useState(1);
+  const [ambientLightIntensity, setAmbientLightIntensity] = useState(3);
 
   const [isNoise, setIsNoise] = useState(false);
   const [isGlitch, setIsGlitch] = useState(false);
@@ -278,11 +278,11 @@ function Map3D({ setPlaceID, setCountry, showInfo, setRadiosFetched, pointColor,
           {isDotScreen && <DotScreen angle={Math.PI * 0.5} scale={1.0} />}
           {isScanline && <Scanline density={2} />}
           {isGrid && <Grid scale={1.0} lineWidth={0.0} />}
-          <Bloom
+          {/* <Bloom
             intensity={0.5}
             luminanceThreshold={0.1}
             luminanceSmoothing={1}
-          />
+          /> */}
           {
             isVisibleStars &&
             <Vignette
@@ -296,8 +296,6 @@ function Map3D({ setPlaceID, setCountry, showInfo, setRadiosFetched, pointColor,
 
       {/* Luz */}
       <ambientLight intensity={ambientLightIntensity} />
-      <pointLight intensity={60} position={[0, 0, 6]} />
-      <pointLight intensity={60} position={[0, 0, -6]} />
 
       {/* Controles */}
       <OrbitControls
