@@ -279,19 +279,6 @@ function Map3D({ setPlaceID, setCountry, showInfo, setRadiosFetched, pointColor,
           {isDotScreen && <DotScreen angle={Math.PI * 0.5} scale={1.0} />}
           {isScanline && <Scanline density={2} />}
           {isGrid && <Grid scale={1.0} lineWidth={0.0} />}
-          {/* <Bloom
-            intensity={0.5}
-            luminanceThreshold={0.1}
-            luminanceSmoothing={1}
-          /> */}
-          {
-            isVisibleStars &&
-            <Vignette
-              offset={.3} // vignette offset
-              darkness={0.2} // vignette darkness
-              eskil={true} // Eskil's vignette technique
-            />
-          }
         </EffectComposer>
       </group>
 
