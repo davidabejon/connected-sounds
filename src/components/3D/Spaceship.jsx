@@ -10,7 +10,7 @@ const dashboardSizes = [
   { type: 'rectangle', size: [1, 0.5] },
 ];
 
-const Spaceship = ({ startAnimation }) => {
+const Spaceship = ({ startAnimation, setIsVisibleStars }) => {
   const dashboardRefs = useRef([]);
   const buttonRefs = useRef([]);
   const glassRef = useRef(null);
@@ -25,6 +25,10 @@ const Spaceship = ({ startAnimation }) => {
     const newPressedState = [...pressed];
     newPressedState[buttonIndex] = !isPressed;
     setPressed(newPressedState);
+    
+    if (buttonIndex === 0) {
+      setIsVisibleStars(!isPressed);
+    }
 
     // sound when button is clicked
     const audio = new Audio(isPressed ? buttonPullSound : buttonPushSound);

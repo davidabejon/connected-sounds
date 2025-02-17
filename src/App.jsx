@@ -155,6 +155,7 @@ function App() {
                 />
                 <Spaceship
                   startAnimation={startAnimation}
+                  setIsVisibleStars={setIsVisibleStars}
                 />
               </Suspense>
             </Canvas>
