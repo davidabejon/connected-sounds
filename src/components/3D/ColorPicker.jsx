@@ -12,7 +12,7 @@ function lerpColor(startColor, endColor, t) {
   ).getStyle();
 }
 
-function ColorPicker({ meshRef, setPointColor, opacity }) {
+function ColorPicker({ setPointColor, opacity }) {
   const texture = useLoader(THREE.TextureLoader, "textures/color_picker.png");
 
   const pickerRef = useRef();
@@ -62,13 +62,13 @@ function ColorPicker({ meshRef, setPointColor, opacity }) {
       pickerRef.current.material.transparent = true;
       pickerRef.current.material.depthWrite = false;
       pickerRef.current.material.depthTest = false;
-      pickerRef.current.material.opacity = 1;
+      pickerRef.current.material.opacity = opacity;
     }
     if (boxRef.current) {
       boxRef.current.material.transparent = true;
       boxRef.current.material.depthWrite = false;
       boxRef.current.material.depthTest = false;
-      boxRef.current.material.opacity = 1;
+      boxRef.current.material.opacity = opacity;
     }
   })
 

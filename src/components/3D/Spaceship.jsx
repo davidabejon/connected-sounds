@@ -180,7 +180,7 @@ const Spaceship = ({ startAnimation, setIsVisibleStars, setPointColor }) => {
         {/* Buttons */}
         {
           buttonColors.map((color, index) => (
-            <mesh
+            <mesh key={index}
               ref={(el) => (buttonRefs.current[index] = el)}
               onClick={() => handleButtonClick(index)}
               onPointerEnter={() => document.getElementsByTagName('canvas')[0].style.cursor = 'pointer'}
@@ -195,7 +195,7 @@ const Spaceship = ({ startAnimation, setIsVisibleStars, setPointColor }) => {
         {/* Dashboard */}
         {
           dashboardSizes.map((data, index) => (
-            <>
+            <React.Fragment key={index}>
               <mesh ref={(el) => (dashboardRefs.current[index] = el)} >
                 {data.type === 'circle' ? <circleGeometry args={data.size} /> : <planeGeometry args={data.size} />}
                 <meshBasicMaterial
@@ -213,11 +213,11 @@ const Spaceship = ({ startAnimation, setIsVisibleStars, setPointColor }) => {
                   depthTest={false}
                 />
               </mesh>
-            </>
+            </React.Fragment>
           ))
         }
 
-        <ColorPicker meshRef={colorPickerRef} setPointColor={setPointColor} />
+        <ColorPicker meshRef={colorPickerRef} setPointColor={setPointColor} opacity={opacity} />
 
       </group>
 
