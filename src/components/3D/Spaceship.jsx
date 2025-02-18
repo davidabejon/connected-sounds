@@ -2,6 +2,7 @@ import React, { useEffect, useRef, useState } from 'react';
 import { useFrame } from '@react-three/fiber';
 import buttonPushSound from '../../assets/sounds/button_push.wav';
 import buttonPullSound from '../../assets/sounds/button_pull.wav';
+import ColorPicker from './ColorPicker';
 
 const buttonColors = ['orange', 'red', 'blue', 'green'];
 const dashboardSizes = [
@@ -10,11 +11,12 @@ const dashboardSizes = [
   { type: 'rectangle', size: [1, 0.5] },
 ];
 
-const Spaceship = ({ startAnimation, setIsVisibleStars }) => {
+const Spaceship = ({ startAnimation, setIsVisibleStars, setPointColor }) => {
   const dashboardRefs = useRef([]);
   const buttonRefs = useRef([]);
   const glassRef = useRef(null);
   const pointLightRef = useRef(null);
+  const colorPickerRef = useRef(null);
   const [pressed, setPressed] = useState([false, false, false, false]);
   const [opacity, setOpacity] = useState(0);
   const [glassOpacity, setGlassOpacity] = useState(0);
@@ -25,7 +27,7 @@ const Spaceship = ({ startAnimation, setIsVisibleStars }) => {
     const newPressedState = [...pressed];
     newPressedState[buttonIndex] = !isPressed;
     setPressed(newPressedState);
-    
+
     if (buttonIndex === 0) {
       setIsVisibleStars(!isPressed);
     }
@@ -114,11 +116,51 @@ const Spaceship = ({ startAnimation, setIsVisibleStars }) => {
       }
     });
 
+    if (colorPickerRef.current) {
+      colorPickerRef.current.position.copy(camera.position);
+      colorPickerRef.current.quaternion.copy(camera.quaternion);
+      colorPickerRef.current.translateZ(-0.2);
+      colorPickerRef.current.translateY(-0.1185);
+      // rotate back a bit
+      colorPickerRef.current.rotateX(-1);
+    }
+
     if (!startAnimation) {
       if (opacity < 1) setOpacity(opacity + 0.01);
       if (glassOpacity < 0.1) setGlassOpacity(glassOpacity + 0.001);
     }
   });
+
+  useEffect(() => {
+
+  }, [buttonRefs])
+
+  useEffect(() => {
+    dashboardRefs.current.forEach((dashboardRef, index) => {
+      if (dashboardRef) {
+        dashboardRef.material.depthWrite = false;
+        dashboardRef.material.depthTest = false;
+        dashboardRef.material.opacity = opacity;
+        dashboardRef.material.transparent = true;
+      }
+    });
+
+    buttonRefs.current.forEach((buttonRef, index) => {
+      if (buttonRef) {
+        buttonRef.material.transparent = true;
+        buttonRef.material.depthWrite = false;
+        buttonRef.material.depthTest = false;
+        buttonRef.material.opacity = opacity;
+      }
+    });
+
+    if (colorPickerRef.current) {
+      colorPickerRef.current.material.transparent = true;
+      colorPickerRef.current.material.depthWrite = false;
+      colorPickerRef.current.material.depthTest = false;
+      colorPickerRef.current.material.opacity = opacity;
+    }
+  }, [dashboardRefs, buttonRefs, colorPickerRef, opacity]);
 
   return (
     <group>
@@ -174,6 +216,9 @@ const Spaceship = ({ startAnimation, setIsVisibleStars }) => {
             </>
           ))
         }
+
+        <ColorPicker meshRef={colorPickerRef} setPointColor={setPointColor} />
+
       </group>
 
       {/* point light */}

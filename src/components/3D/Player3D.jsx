@@ -124,7 +124,7 @@ function Player3D({ info, stations, country, slideRight, slideLeft, handleLoadin
     } else {
       document.getElementById('crosshair').style.borderColor = '#ffe78f'
     }
-    handleLoading(loading)
+    handleLoading(loading, failedToLoad)
   }, [loading, failedToLoad])
 
   useEffect(() => {

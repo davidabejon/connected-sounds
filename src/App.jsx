@@ -120,7 +120,7 @@ function App() {
     root.style.setProperty('--opacity', '0');
   }, [mode])
 
-  const handleLoading = (isLoading) => {
+  const handleLoading = (isLoading, hasError) => {
     const crosshair = document.getElementById('crosshair')
     if (isLoading) {
       crosshair.classList.add('crosshair-loading')
@@ -128,8 +128,13 @@ function App() {
     }
     else {
       crosshair.classList.remove('crosshair-loading')
+      if (!hasError) document.getElementById('crosshair').style.borderColor = pointColor
     }
   }
+
+  useEffect(() => {
+    document.getElementById('crosshair').style.borderColor = pointColor
+  }, [pointColor])
 
   return (
     <div className='app'>
@@ -156,6 +161,7 @@ function App() {
                 <Spaceship
                   startAnimation={startAnimation}
                   setIsVisibleStars={setIsVisibleStars}
+                  setPointColor={setPointColor}
                 />
               </Suspense>
             </Canvas>
