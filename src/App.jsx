@@ -5,7 +5,7 @@ import Player from './components/2D/Player'
 import Map from './components/2D/Map'
 import { Canvas } from '@react-three/fiber'
 import Map3D from './components/3D/Map3D'
-import { Switch } from 'antd'
+import { message, Switch } from 'antd'
 import { Loader } from '@react-three/drei'
 import Loading from './components/3D/Loading'
 import Player3D from './components/3D/Player3D'
@@ -14,12 +14,18 @@ import Spaceship from './components/3D/Spaceship'
 
 function App() {
 
+  const [messageApi, contextHolder] = message.useMessage();
+  const errorMessage = (text) => {
+    messageApi.error(text || 'An unexpected error has occurred', 5);
+  };
+
   const [mode, setMode] = useState('3D')
 
   const [placeID, setPlaceID] = useState('')
   const [country, setCountry] = useState('')
   const [activeStations, setActiveStations] = useState([])
   const [activeStation, setActiveStation] = useState({})
+  useEffect(() => console.log(activeStation), [activeStation])
 
   const [isModalOpen, setIsModalOpen] = useState(false)
 
@@ -138,6 +144,7 @@ function App() {
 
   return (
     <div className='app'>
+      {contextHolder}
       <div className='mode'>
         <Switch onChange={changeMode} checkedChildren="3D" unCheckedChildren="2D" defaultChecked />
       </div>
@@ -163,23 +170,18 @@ function App() {
                   setIsVisibleStars={setIsVisibleStars}
                   setPointColor={setPointColor}
                 />
+                <Player3D
+                  info={activeStation}
+                  stations={activeStations}
+                  country={country}
+                  slideLeft={slideLeftActiveStation}
+                  slideRight={slideRightActiveStation}
+                  handleLoading={handleLoading}
+                  errorMessage={errorMessage}
+                />
               </Suspense>
             </Canvas>
             <Loader />
-            <Player3D
-              info={activeStation}
-              stations={activeStations}
-              country={country}
-              slideLeft={slideLeftActiveStation}
-              slideRight={slideRightActiveStation}
-              handleLoading={handleLoading}
-            />
-            <Settings
-              showInfo={() => setIsModalOpen(true)}
-              pointColor={pointColor}
-              setPointColor={setPointColor}
-              setIsVisibleStars={setIsVisibleStars}
-            />
           </>
           :
           <>

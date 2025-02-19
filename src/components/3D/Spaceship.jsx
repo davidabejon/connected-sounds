@@ -10,6 +10,7 @@ const dashboardSizes = [
   { type: 'circle', size: [0.5, 64] },
   { type: 'circle', size: [0.5, 64] },
   { type: 'rectangle', size: [1, 0.5] },
+  { type: 'rectangle', size: [10, 0.2] },
 ];
 
 const Spaceship = ({ startAnimation, setIsVisibleStars, setPointColor }) => {
@@ -21,6 +22,7 @@ const Spaceship = ({ startAnimation, setIsVisibleStars, setPointColor }) => {
   const [pressed, setPressed] = useState([false, false, false, false]);
   const [opacity, setOpacity] = useState(0);
   const [glassOpacity, setGlassOpacity] = useState(0);
+  const [topOpacity, setTopOpacity] = useState(0);
 
   const handleButtonClick = (buttonIndex) => {
 
@@ -54,17 +56,23 @@ const Spaceship = ({ startAnimation, setIsVisibleStars, setPointColor }) => {
         dashboardRef.translateZ(-0.31);
         dashboardRef.translateY(-0.45);
 
-        if (index % 3 === 0) { // left
+        if (index % 4 === 0) { // left
           dashboardRef.translateX(-0.55)
         }
-        else if (index % 3 === 1) { // right
+        else if (index % 4 === 1) { // right
           dashboardRef.translateX(0.55)
         }
-        else if (index % 3 === 2) { // middle
+        else if (index % 4 === 2) { // middle
           dashboardRef.translateY(0.05)
         }
+        else if (index % 4 === 3) { // top
+          dashboardRef.translateY(1.37)
+          dashboardRef.translateZ(-1.01)
+          dashboardRef.material.color.set('#ADD8E6');
+          dashboardRef.material.opacity = topOpacity;
+        }
 
-        if (index > 2) { // offset all shadows (left, right and middle)
+        if (index > 3) { // offset all shadows (left, right and middle)
           dashboardRef.translateZ(-0.01)
           dashboardRef.translateY(0.015)
         }
@@ -112,6 +120,7 @@ const Spaceship = ({ startAnimation, setIsVisibleStars, setPointColor }) => {
     if (!startAnimation) {
       if (opacity < 1) setOpacity(opacity + 0.01);
       if (glassOpacity < 0.2) setGlassOpacity(glassOpacity + 0.002);
+      if (topOpacity < 0.5) setTopOpacity(topOpacity + 0.01);
     }
   });
 
@@ -172,7 +181,7 @@ const Spaceship = ({ startAnimation, setIsVisibleStars, setPointColor }) => {
                 />
               </mesh>
               {/* shadow */}
-              <mesh ref={(el) => (dashboardRefs.current[index + 3] = el)} >
+              <mesh ref={(el) => (dashboardRefs.current[index + 4] = el)} >
                 {data.type === 'circle' ? <circleGeometry args={data.size} /> : <planeGeometry args={data.size} />}
                 <meshBasicMaterial
                   color="#6b6b6b"
