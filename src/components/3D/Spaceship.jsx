@@ -3,6 +3,7 @@ import { useFrame } from '@react-three/fiber';
 import buttonPushSound from '../../assets/sounds/button_push.wav';
 import buttonPullSound from '../../assets/sounds/button_pull.wav';
 import ColorPicker from './ColorPicker';
+import { followCamera, renderOnTop } from '../../utilities';
 
 const buttonColors = ['orange', 'red', 'blue', 'green'];
 const dashboardSizes = [
@@ -32,7 +33,6 @@ const Spaceship = ({ startAnimation, setIsVisibleStars, setPointColor }) => {
       setIsVisibleStars(!isPressed);
     }
 
-    // sound when button is clicked
     const audio = new Audio(isPressed ? buttonPullSound : buttonPushSound);
     audio.volume = 0.2;
     audio.play();
@@ -47,30 +47,24 @@ const Spaceship = ({ startAnimation, setIsVisibleStars, setPointColor }) => {
     // }, 200); // 200ms to simulate button press time
   };
 
-  // Keep the mesh, glass, and buttons in front of the camera
   useFrame(({ camera }) => {
     dashboardRefs.current.forEach((dashboardRef, index) => {
       if (dashboardRef) {
-        dashboardRef.material.depthWrite = false;
-        dashboardRef.material.depthTest = false;
-        dashboardRef.material.opacity = opacity;
-        dashboardRef.material.transparent = true;
-        dashboardRef.position.copy(camera.position);
-        dashboardRef.quaternion.copy(camera.quaternion);
+        followCamera(dashboardRef, camera);
         dashboardRef.translateZ(-0.31);
         dashboardRef.translateY(-0.45);
 
-        if (index % 3 === 0) {
+        if (index % 3 === 0) { // left
           dashboardRef.translateX(-0.55)
         }
-        else if (index % 3 === 1) {
+        else if (index % 3 === 1) { // right
           dashboardRef.translateX(0.55)
         }
-        else if (index % 3 === 2) {
+        else if (index % 3 === 2) { // middle
           dashboardRef.translateY(0.05)
         }
 
-        if (index > 2) {
+        if (index > 2) { // offset all shadows (left, right and middle)
           dashboardRef.translateZ(-0.01)
           dashboardRef.translateY(0.015)
         }
@@ -78,28 +72,20 @@ const Spaceship = ({ startAnimation, setIsVisibleStars, setPointColor }) => {
     });
 
     if (glassRef.current) {
-      glassRef.current.position.copy(camera.position);
-      glassRef.current.quaternion.copy(camera.quaternion);
+      followCamera(glassRef.current, camera);
       glassRef.current.translateZ(-0.2);
       glassRef.current.translateY(-0.18);
       glassRef.current.rotateX(0.3);
     }
 
     if (pointLightRef.current) {
-      pointLightRef.current.position.copy(camera.position);
-      pointLightRef.current.quaternion.copy(camera.quaternion);
+      followCamera(pointLightRef.current, camera);
       pointLightRef.current.translateZ(0.3);
     }
 
     buttonRefs.current.forEach((buttonRef, index) => {
       if (buttonRef) {
-        buttonRef.material.transparent = true;
-        buttonRef.material.depthWrite = false;
-        buttonRef.material.depthTest = false;
-        buttonRef.material.opacity = opacity;
-
-        buttonRef.position.copy(camera.position);
-        buttonRef.quaternion.copy(camera.quaternion);
+        followCamera(buttonRef, camera);
 
         buttonRef.translateZ(-0.3);
         buttonRef.translateY(index % 2 === 0 ? -0.1 : -0.15);
@@ -117,49 +103,30 @@ const Spaceship = ({ startAnimation, setIsVisibleStars, setPointColor }) => {
     });
 
     if (colorPickerRef.current) {
-      colorPickerRef.current.position.copy(camera.position);
-      colorPickerRef.current.quaternion.copy(camera.quaternion);
+      followCamera(colorPickerRef.current, camera);
       colorPickerRef.current.translateZ(-0.2);
       colorPickerRef.current.translateY(-0.1185);
-      // rotate back a bit
       colorPickerRef.current.rotateX(-1);
     }
 
     if (!startAnimation) {
       if (opacity < 1) setOpacity(opacity + 0.01);
-      if (glassOpacity < 0.1) setGlassOpacity(glassOpacity + 0.001);
+      if (glassOpacity < 0.2) setGlassOpacity(glassOpacity + 0.002);
     }
   });
 
   useEffect(() => {
 
-  }, [buttonRefs])
-
-  useEffect(() => {
     dashboardRefs.current.forEach((dashboardRef, index) => {
-      if (dashboardRef) {
-        dashboardRef.material.depthWrite = false;
-        dashboardRef.material.depthTest = false;
-        dashboardRef.material.opacity = opacity;
-        dashboardRef.material.transparent = true;
-      }
+      if (dashboardRef) renderOnTop(dashboardRef, opacity);
     });
 
     buttonRefs.current.forEach((buttonRef, index) => {
-      if (buttonRef) {
-        buttonRef.material.transparent = true;
-        buttonRef.material.depthWrite = false;
-        buttonRef.material.depthTest = false;
-        buttonRef.material.opacity = opacity;
-      }
+      if (buttonRef) renderOnTop(buttonRef, opacity);
     });
 
-    if (colorPickerRef.current) {
-      colorPickerRef.current.material.transparent = true;
-      colorPickerRef.current.material.depthWrite = false;
-      colorPickerRef.current.material.depthTest = false;
-      colorPickerRef.current.material.opacity = opacity;
-    }
+    if (colorPickerRef.current) renderOnTop(colorPickerRef.current, opacity);
+
   }, [dashboardRefs, buttonRefs, colorPickerRef, opacity]);
 
   return (

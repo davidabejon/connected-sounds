@@ -39,3 +39,15 @@ export const geoTo3D = (lat, lon, radius) => {
 
   return [x, y, z];
 };
+
+export const followCamera = (object, camera) => {
+  object.position.copy(camera.position);
+  object.quaternion.copy(camera.quaternion);
+}
+
+export const renderOnTop = (object, opacity) => {
+  object.material.transparent = true;
+  object.material.depthWrite = false;
+  object.material.depthTest = false;
+  object.material.opacity = opacity;
+}
