@@ -5,10 +5,9 @@ import { calculateVolume, deselectFavicon, followCamera, renderOnTop, selectFavi
 import { Text } from '@react-three/drei';
 import { useFrame } from '@react-three/fiber';
 import p2sFont from '../../assets/fonts/PressStart2P-Regular.ttf';
+import FakeGlowMaterial from './FakeGlowMaterial';
 
-function Player3D({ info, stations, country, slideRight, slideLeft, handleLoading, errorMessage }) {
-
-  const textRef = useRef()
+function Player3D({ info, stations, country, slideRight, slideLeft, handleLoading, errorMessage, color }) {
 
   const audioRef = useRef(new Audio());
   const [muted, setMuted] = useState(false)
@@ -116,25 +115,16 @@ function Player3D({ info, stations, country, slideRight, slideLeft, handleLoadin
     handleLoading(loading, failedToLoad)
   }, [loading, failedToLoad])
 
-
-  useFrame(({ camera }) => {
-    if (textRef.current) {
-      followCamera(textRef.current, camera)
-      renderOnTop(textRef.current, 1)
-      textRef.current.translateZ(-0.5)
-      textRef.current.translateY(0.3)
-    }
-  })
-
   return (
     <>
       <ScrollingText
         text={info?.title}
         country={info?.country}
         place={info?.place}
-        speed={0.003}
+        speed={0.0015}
         width={3}
         failedToLoad={failedToLoad}
+        color={color}
       />
     </>
     // <div className='player'>
@@ -170,31 +160,51 @@ function Player3D({ info, stations, country, slideRight, slideLeft, handleLoadin
 export default Player3D;
 
 
-const ScrollingText = ({ text, country, place, speed = 0.02, width = 3, color = 'yellow', failedToLoad = false }) => {
-  const textRef = useRef();
-  const subtitleRef = useRef();
+const ScrollingText = ({ text, country, place, speed = 0.02, width = 3, color = '#ff5f1f', failedToLoad = false }) => {
+  const textRefs = useRef([...Array(3)].map(() => React.createRef()));
+  const subtitleRefs = useRef([...Array(3)].map(() => React.createRef()));
+  const cloneRefs = useRef([...Array(3)].map(() => React.createRef()));
   const offset = useRef(0);
   const [opacity, setOpacity] = useState(0);
 
+  const refs = textRefs.current.map((textRef, index) => ({
+    textRef,
+    subtitleRef: subtitleRefs.current[index],
+    cloneRef: cloneRefs.current[index],
+    offset: index === 0 ? 0 : index === 1 ? 3 : -3
+  }));
+
   useFrame(({ camera }) => {
-    if (textRef.current) {
-      followCamera(textRef.current, camera);
-      renderOnTop(textRef.current, 1);
-      textRef.current.translateY(0.72);
-      textRef.current.translateZ(-1);
 
-      offset.current = (offset.current + speed) % (2 * width);
-      textRef.current.translateX(-width + (offset.current % (2 * width)));
-    }
+    refs.forEach(ref => {
+      if (ref.textRef.current) {
+        followCamera(ref.textRef.current, camera);
+        renderOnTop(ref.textRef.current, 1);
+        ref.textRef.current.translateY(0.71);
+        ref.textRef.current.translateZ(-1);
 
-    if (subtitleRef.current) {
-      followCamera(subtitleRef.current, camera);
-      renderOnTop(subtitleRef.current, 1);
-      subtitleRef.current.translateY(0.66);
-      subtitleRef.current.translateZ(-1);
+        offset.current = (offset.current + speed) % (2 * width);
+        ref.textRef.current.translateX(-width + (offset.current % (2 * width)) + ref.offset);
+      }
 
-      subtitleRef.current.translateX(-width + (offset.current % (2 * width)));
-    }
+      if (ref.subtitleRef.current) {
+        followCamera(ref.subtitleRef.current, camera);
+        renderOnTop(ref.subtitleRef.current, 1);
+        ref.subtitleRef.current.translateY(0.66);
+        ref.subtitleRef.current.translateZ(-1);
+
+        ref.subtitleRef.current.translateX(-width + (offset.current % (2 * width)) + ref.offset);
+      }
+
+      if (ref.cloneRef.current) {
+        followCamera(ref.cloneRef.current, camera);
+        renderOnTop(ref.cloneRef.current, 1);
+        ref.cloneRef.current.translateY(0.71);
+        ref.cloneRef.current.translateZ(-1);
+
+        ref.cloneRef.current.translateX(-width + (offset.current % (2 * width)) + ref.offset);
+      }
+    })
 
     if (text && country && place) {
       if (opacity < 1) {
@@ -204,15 +214,21 @@ const ScrollingText = ({ text, country, place, speed = 0.02, width = 3, color = 
   });
 
   return (
-    <>
-      <Text ref={textRef} fontSize={0.06} color={failedToLoad ? 'red' : color} font={p2sFont} fillOpacity={opacity}>
-        {
-          failedToLoad ? text : `Now playing: ${text}`
-        }
-      </Text>
-      <Text ref={subtitleRef} fontSize={0.03} color={failedToLoad ? 'red' : color} font={p2sFont} fillOpacity={opacity}>
-        {country && place ? `${country}, ${place}` : null}
-      </Text>
-    </>
+    refs.map((ref, index) => (
+      <React.Fragment key={index}>
+        <Text ref={ref.textRef} fontSize={0.06} color={failedToLoad ? 'red' : color} font={p2sFont} fillOpacity={opacity}>
+          {failedToLoad ? `Failed: ${text}` : `Now playing: ${text}`}
+          <FakeGlowMaterial glowSharpness={100} falloff={.01} glowColor={failedToLoad ? 'red' : color} />
+        </Text>
+        <Text ref={ref.cloneRef} fontSize={0.06} color={failedToLoad ? 'red' : color} font={p2sFont} fillOpacity={opacity}>
+          {failedToLoad ? `Failed: ${text}` : `Now playing: ${text}`}
+          <FakeGlowMaterial glowSharpness={100} falloff={.005} glowColor={failedToLoad ? 'red' : color} />
+        </Text>
+        <Text ref={ref.subtitleRef} fontSize={0.03} color={failedToLoad ? 'red' : color} font={p2sFont} fillOpacity={opacity}>
+          {country && place ? `${country}, ${place}` : null}
+          <FakeGlowMaterial glowSharpness={100} falloff={.01} glowColor={failedToLoad ? 'red' : color} />
+        </Text>
+      </React.Fragment>
+    ))
   );
 };

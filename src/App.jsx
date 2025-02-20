@@ -9,7 +9,6 @@ import { message, Switch } from 'antd'
 import { Loader } from '@react-three/drei'
 import Loading from './components/3D/Loading'
 import Player3D from './components/3D/Player3D'
-import Settings from './components/3D/Settings'
 import Spaceship from './components/3D/Spaceship'
 
 function App() {
@@ -178,6 +177,7 @@ function App() {
                   slideRight={slideRightActiveStation}
                   handleLoading={handleLoading}
                   errorMessage={errorMessage}
+                  color={pointColor}
                 />
               </Suspense>
             </Canvas>

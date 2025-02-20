@@ -68,7 +68,7 @@ const Spaceship = ({ startAnimation, setIsVisibleStars, setPointColor }) => {
         else if (index % 4 === 3) { // top
           dashboardRef.translateY(1.37)
           dashboardRef.translateZ(-1.01)
-          dashboardRef.material.color.set('#ADD8E6');
+          dashboardRef.material.color.set('#000');
           dashboardRef.material.opacity = topOpacity;
         }
 
