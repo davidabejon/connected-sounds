@@ -10,6 +10,7 @@ import { Loader } from '@react-three/drei'
 import Loading from './components/3D/Loading'
 import Player3D from './components/3D/Player3D'
 import Spaceship from './components/3D/Spaceship'
+import GrabHelper from './components/3D/GrabHelper'
 
 function App() {
 
@@ -152,6 +153,7 @@ function App() {
         mode === '3D' ?
           <>
             <div id='crosshair' className='showup crosshair'></div>
+            <GrabHelper startAnimation={startAnimation} />
             <Canvas style={{ width: '100vw', height: '100vh' }}>
               <Suspense fallback={<Loading radiosFetched={radiosFetched} />}>
                 <Map3D

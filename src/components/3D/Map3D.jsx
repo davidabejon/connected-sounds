@@ -1,6 +1,6 @@
 import { OrbitControls, Stars, TrackballControls, useTexture } from '@react-three/drei';
 import { useFrame, useThree } from '@react-three/fiber';
-import { Bloom, ColorAverage, DotScreen, EffectComposer, Glitch, Grid, Noise, Pixelation, Scanline, Vignette } from '@react-three/postprocessing';
+import { Bloom, ColorAverage, DotScreen, EffectComposer, Glitch, Grid, Noise, Outline, Pixelation, Scanline, Vignette } from '@react-three/postprocessing';
 import { useEffect, useRef, useState } from 'react';
 import * as THREE from 'three';
 import { geoTo3D } from '../../utilities';
@@ -42,6 +42,10 @@ function Map3D({ setPlaceID, setCountry, showInfo, setRadiosFetched, pointColor,
   const [isDotScreen, setIsDotScreen] = useState(false);
   const [isScanline, setIsScanline] = useState(false);
   const [isGrid, setIsGrid] = useState(false);
+
+  useEffect(() => {
+    if (!startAnimation) setMinZoom(2.15);
+  }, [startAnimation])
 
   useEffect(() => {
     fetch('/api' + '/geo')
