@@ -123,6 +123,7 @@ function Player3D({ info, stations, country, slideRight, slideLeft, handleLoadin
         place={info?.place}
         speed={0.0015}
         width={3}
+        loading={loading}
         failedToLoad={failedToLoad}
         color={color}
       />
@@ -160,7 +161,7 @@ function Player3D({ info, stations, country, slideRight, slideLeft, handleLoadin
 export default Player3D;
 
 
-const ScrollingText = ({ text, country, place, speed = 0.02, width = 3, color = '#ff5f1f', failedToLoad = false }) => {
+const ScrollingText = ({ text, country, place, speed = 0.02, width = 3, color = '#ff5f1f', loading, failedToLoad = false }) => {
   const textRefs = useRef([...Array(3)].map(() => React.createRef()));
   const subtitleRefs = useRef([...Array(3)].map(() => React.createRef()));
   const cloneRefs = useRef([...Array(3)].map(() => React.createRef()));
@@ -213,15 +214,17 @@ const ScrollingText = ({ text, country, place, speed = 0.02, width = 3, color = 
     }
   });
 
+  const getStatusText = () => failedToLoad ? 'Failed:' : loading ? 'Loading:' : 'Now playing:'
+
   return (
     refs.map((ref, index) => (
       <React.Fragment key={index}>
         <Text ref={ref.textRef} fontSize={0.06} color={failedToLoad ? 'red' : color} font={p2sFont} fillOpacity={opacity}>
-          {failedToLoad ? `Failed: ${text}` : `Now playing: ${text}`}
+          {`${getStatusText()} ${text}`}
           <FakeGlowMaterial glowSharpness={100} falloff={.01} glowColor={failedToLoad ? 'red' : color} />
         </Text>
         <Text ref={ref.cloneRef} fontSize={0.06} color={failedToLoad ? 'red' : color} font={p2sFont} fillOpacity={opacity}>
-          {failedToLoad ? `Failed: ${text}` : `Now playing: ${text}`}
+          {`${getStatusText()} ${text}`}
           <FakeGlowMaterial glowSharpness={100} falloff={.005} glowColor={failedToLoad ? 'red' : color} />
         </Text>
         <Text ref={ref.subtitleRef} fontSize={0.03} color={failedToLoad ? 'red' : color} font={p2sFont} fillOpacity={opacity}>
