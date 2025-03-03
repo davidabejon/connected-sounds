@@ -16,7 +16,6 @@ function ColorPicker({ setPointColor, opacity }) {
   const texture = useLoader(THREE.TextureLoader, "textures/color_picker.png");
 
   const pickerRef = useRef();
-  const boxRef = useRef();
 
   const handleClick = (event) => {
     const { uv } = event;
@@ -45,15 +44,10 @@ function ColorPicker({ setPointColor, opacity }) {
       pickerRef.current.position.copy(camera.position);
       pickerRef.current.quaternion.copy(camera.quaternion);
       pickerRef.current.translateZ(-0.2);
-      pickerRef.current.translateY(-0.075);
-      pickerRef.current.rotateX(-1);
-    }
-    if (boxRef.current) {
-      boxRef.current.position.copy(camera.position);
-      boxRef.current.quaternion.copy(camera.quaternion);
-      boxRef.current.translateZ(-0.201);
-      boxRef.current.translateY(-0.12);
-      boxRef.current.rotateX(-1.3);
+      pickerRef.current.translateY(-0.1);
+      pickerRef.current.translateX(0.215);
+      pickerRef.current.rotateY(-0.2);
+      pickerRef.current.rotateX(-0.2);      
     }
   })
 
@@ -63,12 +57,6 @@ function ColorPicker({ setPointColor, opacity }) {
       pickerRef.current.material.depthWrite = false;
       pickerRef.current.material.depthTest = false;
       pickerRef.current.material.opacity = opacity;
-    }
-    if (boxRef.current) {
-      boxRef.current.material.transparent = true;
-      boxRef.current.material.depthWrite = false;
-      boxRef.current.material.depthTest = false;
-      boxRef.current.material.opacity = opacity;
     }
   })
 
@@ -82,11 +70,6 @@ function ColorPicker({ setPointColor, opacity }) {
       >
         <boxGeometry args={[.1, .07, 0]} />
         <meshBasicMaterial map={texture} />
-      </mesh>
-      {/* box behind as a shadow */}
-      <mesh ref={boxRef}>
-        <cylinderGeometry args={[0.07, 0.075, 0.05, 32]} />
-        <meshBasicMaterial color="#ccc" />
       </mesh>
     </>
   );

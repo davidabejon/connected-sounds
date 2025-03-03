@@ -4,6 +4,7 @@ import buttonPushSound from '../../assets/sounds/button_push.wav';
 import buttonPullSound from '../../assets/sounds/button_pull.wav';
 import ColorPicker from './ColorPicker';
 import { followCamera, renderOnTop } from '../../utilities';
+import { Selection, Select, EffectComposer, Outline } from '@react-three/postprocessing'
 
 const buttonColors = ['orange', 'red', 'blue', 'green'];
 const dashboardSizes = [
@@ -54,7 +55,7 @@ const Spaceship = ({ startAnimation, setIsVisibleStars, setPointColor }) => {
       if (dashboardRef) {
         followCamera(dashboardRef, camera);
         dashboardRef.translateZ(-0.31);
-        dashboardRef.translateY(-0.45);
+        dashboardRef.translateY(-0.5);
 
         if (index % 4 === 0) { // left
           dashboardRef.translateX(-0.55)
@@ -63,9 +64,11 @@ const Spaceship = ({ startAnimation, setIsVisibleStars, setPointColor }) => {
           dashboardRef.translateX(0.55)
         }
         else if (index % 4 === 2) { // middle
+          dashboardRef.translateY(0.05);
           dashboardRef.translateY(0.05)
         }
         else if (index % 4 === 3) { // top
+          dashboardRef.translateY(0.05);
           dashboardRef.translateY(1.37)
           dashboardRef.translateZ(-1.01)
           dashboardRef.material.color.set('#000');
@@ -96,15 +99,15 @@ const Spaceship = ({ startAnimation, setIsVisibleStars, setPointColor }) => {
         followCamera(buttonRef, camera);
 
         buttonRef.translateZ(-0.3);
-        buttonRef.translateY(index % 2 === 0 ? -0.1 : -0.15);
-        buttonRef.translateX(index === 0 ? -0.35 : index === 1 ? -0.25 : index === 3 ? 0.25 : 0.35);
-        buttonRef.rotateX(1);
-        buttonRef.rotateZ(index === 0 || index === 1 ? -1 : 1);
+        buttonRef.translateY(-0.2);
+        buttonRef.translateX(-.07 + (index * 0.05));
+        buttonRef.rotateX(0.5);
+        buttonRef.rotateZ(0);
 
         buttonRef.scale.y = 1; // default scale, change if pressed
         if (pressed[index]) {
           buttonRef.scale.y = 0.5;
-          buttonRef.translateY(-0.02);
+          buttonRef.translateY(-0.007);
         }
 
       }
@@ -119,7 +122,7 @@ const Spaceship = ({ startAnimation, setIsVisibleStars, setPointColor }) => {
 
     if (!startAnimation) {
       if (opacity < 1) setOpacity(opacity + 0.01);
-      if (glassOpacity < 0.2) setGlassOpacity(glassOpacity + 0.002);
+      if (glassOpacity < 0.02) setGlassOpacity(glassOpacity + 0.001);
       if (topOpacity < 0.5) setTopOpacity(topOpacity + 0.01);
     }
   });
@@ -153,20 +156,19 @@ const Spaceship = ({ startAnimation, setIsVisibleStars, setPointColor }) => {
       </mesh>
 
       <group name='spaceship'>
-        {/* Buttons */}
-        {
-          buttonColors.map((color, index) => (
-            <mesh key={index}
-              ref={(el) => (buttonRefs.current[index] = el)}
-              onClick={() => handleButtonClick(index)}
-              onPointerEnter={() => document.getElementsByTagName('canvas')[0].style.cursor = 'pointer'}
-              onPointerLeave={() => document.getElementsByTagName('canvas')[0].style.cursor = 'grab'}
-            >
-              <cylinderGeometry args={[0.03, 0.03, 0.05, 32]} />
-              <meshStandardMaterial color={color} />
-            </mesh>
-          ))
-        }
+        <Selection>
+          <EffectComposer multisampling={8} autoClear={false}>
+            <Outline blur visibleEdgeColor="white" edgeStrength={5000} width={3000} />
+          </EffectComposer>
+          <group name='buttons'>
+            {/* Buttons */}
+            {
+              buttonColors.map((color, index) => (
+                <Button key={index} color={color} onClick={() => handleButtonClick(index)} refInstance={(el) => (buttonRefs.current[index] = el)} />
+              ))
+            }
+          </group>
+        </Selection>
 
         {/* Dashboard */}
         {
@@ -198,10 +200,31 @@ const Spaceship = ({ startAnimation, setIsVisibleStars, setPointColor }) => {
       </group>
 
       {/* point light */}
-      <pointLight ref={pointLightRef} intensity={.8} />
+      <pointLight ref={pointLightRef} intensity={3} color={'grey'} />
 
     </group>
   );
 };
 
 export default Spaceship;
+
+
+function Button({ color, onClick, onPointerEnter, onPointerLeave, refInstance }) {
+  const [hovered, hover] = useState(null)
+
+  return (
+    <Select enabled={hovered}>
+      <mesh
+        onClick={onClick}
+        onPointerEnter={onPointerEnter}
+        onPointerLeave={onPointerLeave}
+        onPointerOver={() => hover(true)}
+        onPointerOut={() => hover(false)}
+        ref={refInstance}
+      >
+        <cylinderGeometry args={[0.01, 0.01, 0.02, 32]} />
+        <meshPhongMaterial color={color} />
+      </mesh>
+    </Select>
+  );
+}
