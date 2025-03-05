@@ -2,12 +2,12 @@ import React from 'react';
 import { useEffect, useRef, useState } from "react";
 import '../../styles/Player.css';
 import { calculateVolume, deselectFavicon, followCamera, renderOnTop, selectFavicon, shortenText, TITLE_MAX_LENGTH } from "../../utilities";
-import { Text } from '@react-three/drei';
+import { Html, Text } from '@react-three/drei';
 import { useFrame } from '@react-three/fiber';
 import p2sFont from '../../assets/fonts/PressStart2P-Regular.ttf';
 import FakeGlowMaterial from './FakeGlowMaterial';
 
-function Player3D({ info, stations, country, slideRight, slideLeft, handleLoading, errorMessage, color }) {
+function Player3D({ info, stations, country, slideRight, slideLeft, handleLoading, errorMessage, color, setIsPlaying }) {
 
   const audioRef = useRef(new Audio());
   const [muted, setMuted] = useState(false)
@@ -31,10 +31,12 @@ function Player3D({ info, stations, country, slideRight, slideLeft, handleLoadin
     audio.src = url
     audio.load()
     setLoading(true)
+    setIsPlaying(false)
     audio.play()
       .then(() => {
         selectFavicon()
         setLoading(false)
+        setIsPlaying(true)
       })
       .catch((e) => {
         // permitimos los errores de tipo AbortError porque se causan al cambiar de estación rápidamente
@@ -43,6 +45,7 @@ function Player3D({ info, stations, country, slideRight, slideLeft, handleLoadin
           errorMessage("Failed to load the radio station")
           setLoading(false)
           setFailedToLoad(true)
+          setIsPlaying(false)
         }
       })
   }

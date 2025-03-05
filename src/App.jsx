@@ -11,6 +11,7 @@ import Loading from './components/3D/Loading'
 import Player3D from './components/3D/Player3D'
 import Spaceship from './components/3D/Spaceship'
 import GrabHelper from './components/3D/GrabHelper'
+import AudioVisualizer from './components/3D/AudioVisualizer'
 
 function App() {
 
@@ -34,6 +35,7 @@ function App() {
   const [pointColor, setPointColor] = useState('#FFD700')
   const [isVisibleStars, setIsVisibleStars] = useState(false)
   const [startAnimation, setStartAnimation] = useState(true)
+  const [isPlaying, setIsPlaying] = useState(false)
 
   const slideRightActiveStation = () => {
     let index = activeStations.findIndex(station => station.page.title === activeStation.title)
@@ -153,6 +155,7 @@ function App() {
         mode === '3D' ?
           <>
             <div id='crosshair' className='showup crosshair'></div>
+            <AudioVisualizer isPlaying={isPlaying} startAnimation={startAnimation} />
             <GrabHelper startAnimation={startAnimation} />
             <Canvas style={{ width: '100vw', height: '100vh' }}>
               <Suspense fallback={<Loading radiosFetched={radiosFetched} />}>
@@ -180,6 +183,7 @@ function App() {
                   handleLoading={handleLoading}
                   errorMessage={errorMessage}
                   color={pointColor}
+                  setIsPlaying={setIsPlaying}
                 />
               </Suspense>
             </Canvas>
