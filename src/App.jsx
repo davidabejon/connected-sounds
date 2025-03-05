@@ -155,7 +155,7 @@ function App() {
         mode === '3D' ?
           <>
             <div id='crosshair' className='showup crosshair'></div>
-            <AudioVisualizer isPlaying={isPlaying} startAnimation={startAnimation} />
+            <AudioVisualizer isPlaying={isPlaying} startAnimation={startAnimation} color={pointColor} />
             <GrabHelper startAnimation={startAnimation} />
             <Canvas style={{ width: '100vw', height: '100vh' }}>
               <Suspense fallback={<Loading radiosFetched={radiosFetched} />}>

@@ -1,6 +1,6 @@
 import { useEffect } from "react";
 import '../../styles/AudioVisualizer.css';
-function AudioVisualizer({ isPlaying, startAnimation }) {
+function AudioVisualizer({ isPlaying, startAnimation, color }) {
 
   useEffect(() => {
     const bar = document.querySelectorAll(".bar");
@@ -21,6 +21,15 @@ function AudioVisualizer({ isPlaying, startAnimation }) {
       document.getElementById('sound-wave').style.opacity = 1;
     }
   }, [startAnimation])
+
+  useEffect(() => {
+    const bar = document.querySelectorAll(".bar");
+    for (let i = 0; i < bar.length; i++) {
+      bar.forEach((item, j) => {
+        item.style.background = color;
+      });
+    }
+  }, [color])
 
   return (
     <div className="sound-wave" id="sound-wave">
