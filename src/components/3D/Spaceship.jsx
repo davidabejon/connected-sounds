@@ -99,10 +99,10 @@ const Spaceship = ({ startAnimation, setIsVisibleStars, setPointColor }) => {
         followCamera(buttonRef, camera);
 
         buttonRef.translateZ(-0.3);
-        buttonRef.translateY(-0.2);
-        buttonRef.translateX(-.07 + (index * 0.05));
-        buttonRef.rotateX(0.5);
-        buttonRef.rotateZ(0);
+        buttonRef.translateY(-0.17 - (index % 2 === 0 ? 0 : 0.04));
+        buttonRef.translateX(-.17 + (index == 0 || index == 1 ? 0.04 : 0));
+        buttonRef.rotateX(0.6);
+        buttonRef.rotateZ(-0.5);
 
         buttonRef.scale.y = 1; // default scale, change if pressed
         if (pressed[index]) {
