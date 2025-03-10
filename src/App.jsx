@@ -5,10 +5,15 @@ import App2D from './components/2D/App2D'
 import App3D from './components/3D/App3D'
 import { BrowserRouter, Route, Routes } from 'react-router-dom';
 import Redirect from './components/Redirect'
+import { newPath, oldPath } from './utilities'
 
 function App() {
 
-  const [mode, setMode] = useState('3D')
+  const [mode, setMode] = useState(null)
+  useEffect(() => {
+    if (window.location.href.includes(oldPath)) setMode('2D')
+    else setMode('3D')
+  }, [])
 
   const [placeID, setPlaceID] = useState('')
   const [country, setCountry] = useState('')
@@ -111,14 +116,12 @@ function App() {
     <div className='app'>
       {/* <Welcome setIsModalOpen={setIsModalOpen} isModalOpen={isModalOpen} /> */}
       <div className='mode'>
-        <Switch onChange={changeMode} checkedChildren="3D" unCheckedChildren="2D" defaultChecked />
+        <Switch onChange={changeMode} checkedChildren="3D" unCheckedChildren="2D" value={mode == '3D'} />
       </div>
       <BrowserRouter>
         <Routes>
-          <Route path="*" element={
-            <Redirect to='/new' />
-          } />
-          <Route path="/new" element={
+          <Route path="*" element={<Redirect to={newPath} />} />
+          <Route path={newPath} element={
             <App3D
               setPlaceID={setPlaceID}
               setCountry={setCountry}
@@ -131,7 +134,7 @@ function App() {
               mode={mode}
             />
           } />
-          <Route path="/old" element={
+          <Route path={oldPath} element={
             <App2D
               setPlaceID={setPlaceID}
               setCountry={setCountry}
@@ -146,34 +149,6 @@ function App() {
           } />
         </Routes>
       </BrowserRouter>
-      {/* {
-        mode === '3D' ?
-          <>
-            <App3D
-              setPlaceID={setPlaceID}
-              setCountry={setCountry}
-              setIsModalOpen={setIsModalOpen}
-              activeStation={activeStation}
-              activeStations={activeStations}
-              country={country}
-              slideLeftActiveStation={slideLeftActiveStation}
-              slideRightActiveStation={slideRightActiveStation}
-            />
-          </>
-          :
-          <>
-            <App2D
-              setPlaceID={setPlaceID}
-              setCountry={setCountry}
-              setIsModalOpen={setIsModalOpen}
-              activeStation={activeStation}
-              activeStations={activeStations}
-              country={country}
-              slideLeftActiveStation={slideLeftActiveStation}
-              slideRightActiveStation={slideRightActiveStation}
-            />
-          </>
-      } */}
     </div>
   )
 }

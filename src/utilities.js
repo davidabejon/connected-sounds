@@ -3,6 +3,9 @@ import faviconNotSelected from './assets/favicon-notselected.png';
 
 export const TITLE_MAX_LENGTH = 28;
 
+export const oldPath = '/old';
+export const newPath = '/new';
+
 export const selectFavicon = () => {
   var link = document.querySelector("link[rel~='icon']");
   link.href = faviconSelected;
