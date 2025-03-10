@@ -1,24 +1,12 @@
-import { Suspense, useEffect, useState } from 'react'
+import { useEffect, useState } from 'react'
 import './App.css'
-import Welcome from './components/Welcome'
-import Player from './components/2D/Player'
-import Map from './components/2D/Map'
-import { Canvas } from '@react-three/fiber'
-import Map3D from './components/3D/Map3D'
-import { message, Switch } from 'antd'
-import { Loader } from '@react-three/drei'
-import Loading from './components/3D/Loading'
-import Player3D from './components/3D/Player3D'
-import Spaceship from './components/3D/Spaceship'
-import GrabHelper from './components/3D/GrabHelper'
-import AudioVisualizer from './components/3D/AudioVisualizer'
+import { Switch } from 'antd'
+import App2D from './components/2D/App2D'
+import App3D from './components/3D/App3D'
+import { BrowserRouter, Route, Routes } from 'react-router-dom';
+import Redirect from './components/Redirect'
 
 function App() {
-
-  const [messageApi, contextHolder] = message.useMessage();
-  const errorMessage = (text) => {
-    messageApi.error(text || 'An unexpected error has occurred', 5);
-  };
 
   const [mode, setMode] = useState('3D')
 
@@ -26,16 +14,7 @@ function App() {
   const [country, setCountry] = useState('')
   const [activeStations, setActiveStations] = useState([])
   const [activeStation, setActiveStation] = useState({})
-  useEffect(() => console.log(activeStation), [activeStation])
-
   const [isModalOpen, setIsModalOpen] = useState(false)
-
-  const [radiosFetched, setRadiosFetched] = useState(false)
-
-  const [pointColor, setPointColor] = useState('#FFD700')
-  const [isVisibleStars, setIsVisibleStars] = useState(false)
-  const [startAnimation, setStartAnimation] = useState(true)
-  const [isPlaying, setIsPlaying] = useState(false)
 
   const slideRightActiveStation = () => {
     let index = activeStations.findIndex(station => station.page.title === activeStation.title)
@@ -128,79 +107,73 @@ function App() {
     root.style.setProperty('--opacity', '0');
   }, [mode])
 
-  const handleLoading = (isLoading, hasError) => {
-    const crosshair = document.getElementById('crosshair')
-    if (isLoading) {
-      crosshair.classList.add('crosshair-loading')
-      crosshair.classList.remove('showup')
-    }
-    else {
-      crosshair.classList.remove('crosshair-loading')
-      if (!hasError) document.getElementById('crosshair').style.borderColor = pointColor
-    }
-  }
-
-  useEffect(() => {
-    document.getElementById('crosshair').style.borderColor = pointColor
-  }, [pointColor])
-
   return (
     <div className='app'>
-      {contextHolder}
+      {/* <Welcome setIsModalOpen={setIsModalOpen} isModalOpen={isModalOpen} /> */}
       <div className='mode'>
         <Switch onChange={changeMode} checkedChildren="3D" unCheckedChildren="2D" defaultChecked />
       </div>
-      {/* <Welcome setIsModalOpen={setIsModalOpen} isModalOpen={isModalOpen} /> */}
-      {
+      <BrowserRouter>
+        <Routes>
+          <Route path="*" element={
+            <Redirect to='/new' />
+          } />
+          <Route path="/new" element={
+            <App3D
+              setPlaceID={setPlaceID}
+              setCountry={setCountry}
+              setIsModalOpen={setIsModalOpen}
+              activeStation={activeStation}
+              activeStations={activeStations}
+              country={country}
+              slideLeftActiveStation={slideLeftActiveStation}
+              slideRightActiveStation={slideRightActiveStation}
+              mode={mode}
+            />
+          } />
+          <Route path="/old" element={
+            <App2D
+              setPlaceID={setPlaceID}
+              setCountry={setCountry}
+              setIsModalOpen={setIsModalOpen}
+              activeStation={activeStation}
+              activeStations={activeStations}
+              country={country}
+              slideLeftActiveStation={slideLeftActiveStation}
+              slideRightActiveStation={slideRightActiveStation}
+              mode={mode}
+            />
+          } />
+        </Routes>
+      </BrowserRouter>
+      {/* {
         mode === '3D' ?
           <>
-            <div id='crosshair' className='showup crosshair'></div>
-            <AudioVisualizer isPlaying={isPlaying} startAnimation={startAnimation} color={pointColor} />
-            <GrabHelper startAnimation={startAnimation} />
-            <Canvas style={{ width: '100vw', height: '100vh' }}>
-              <Suspense fallback={<Loading radiosFetched={radiosFetched} />}>
-                <Map3D
-                  setPlaceID={setPlaceID}
-                  setCountry={setCountry}
-                  showInfo={() => setIsModalOpen(true)}
-                  setRadiosFetched={setRadiosFetched}
-                  pointColor={pointColor}
-                  isVisibleStars={isVisibleStars}
-                  startAnimation={startAnimation}
-                  setStartAnimation={setStartAnimation}
-                />
-                <Spaceship
-                  startAnimation={startAnimation}
-                  setIsVisibleStars={setIsVisibleStars}
-                  setPointColor={setPointColor}
-                />
-                <Player3D
-                  info={activeStation}
-                  stations={activeStations}
-                  country={country}
-                  slideLeft={slideLeftActiveStation}
-                  slideRight={slideRightActiveStation}
-                  handleLoading={handleLoading}
-                  errorMessage={errorMessage}
-                  color={pointColor}
-                  setIsPlaying={setIsPlaying}
-                />
-              </Suspense>
-            </Canvas>
-            <Loader />
+            <App3D
+              setPlaceID={setPlaceID}
+              setCountry={setCountry}
+              setIsModalOpen={setIsModalOpen}
+              activeStation={activeStation}
+              activeStations={activeStations}
+              country={country}
+              slideLeftActiveStation={slideLeftActiveStation}
+              slideRightActiveStation={slideRightActiveStation}
+            />
           </>
           :
           <>
-            <Map setPlaceID={setPlaceID} setCountry={setCountry} showInfo={() => setIsModalOpen(true)} />
-            <Player
-              info={activeStation}
-              stations={activeStations}
+            <App2D
+              setPlaceID={setPlaceID}
+              setCountry={setCountry}
+              setIsModalOpen={setIsModalOpen}
+              activeStation={activeStation}
+              activeStations={activeStations}
               country={country}
-              slideLeft={slideLeftActiveStation}
-              slideRight={slideRightActiveStation}
+              slideLeftActiveStation={slideLeftActiveStation}
+              slideRightActiveStation={slideRightActiveStation}
             />
           </>
-      }
+      } */}
     </div>
   )
 }
