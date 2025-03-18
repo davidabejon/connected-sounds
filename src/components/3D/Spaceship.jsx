@@ -209,15 +209,19 @@ const Spaceship = ({ startAnimation, setIsVisibleStars, setPointColor }) => {
 export default Spaceship;
 
 
-function Button({ color, onClick, onPointerEnter, onPointerLeave, refInstance }) {
+function Button({ color, onClick, refInstance }) {
   const [hovered, hover] = useState(null)
+
+  const changeCursor = (type) => {
+    document.getElementsByTagName('canvas')[0].style.cursor = type;
+  }
 
   return (
     <Select enabled={hovered}>
       <mesh
         onClick={onClick}
-        onPointerEnter={onPointerEnter}
-        onPointerLeave={onPointerLeave}
+        onPointerEnter={() => changeCursor('pointer')}
+        onPointerLeave={() => changeCursor('grab')}
         onPointerOver={() => hover(true)}
         onPointerOut={() => hover(false)}
         ref={refInstance}
