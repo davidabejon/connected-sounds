@@ -1,3 +1,4 @@
+import lookup from "country-code-lookup";
 import faviconSelected from './assets/favicon-selected.png';
 import faviconNotSelected from './assets/favicon-notselected.png';
 
@@ -53,4 +54,9 @@ export const renderOnTop = (object, opacity) => {
   object.material.depthWrite = false;
   object.material.depthTest = false;
   object.material.opacity = opacity;
+}
+
+export function getCountryCode(countryName) {
+  const countryCode = lookup.byCountry(countryName)?.iso2;
+  return countryCode;
 }

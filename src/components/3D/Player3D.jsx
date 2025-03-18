@@ -1,7 +1,7 @@
 import React from 'react';
 import { useEffect, useRef, useState } from "react";
 import '../../styles/Player.css';
-import { calculateVolume, deselectFavicon, followCamera, renderOnTop, selectFavicon, shortenText, TITLE_MAX_LENGTH } from "../../utilities";
+import { calculateVolume, deselectFavicon, followCamera, getCountryCode, renderOnTop, selectFavicon, shortenText, TITLE_MAX_LENGTH } from "../../utilities";
 import { Html, Text } from '@react-three/drei';
 import { useFrame } from '@react-three/fiber';
 import p2sFont from '../../assets/fonts/PressStart2P-Regular.ttf';
@@ -15,6 +15,7 @@ function Player3D({ info, stations, country, slideRight, slideLeft, handleLoadin
   const [volumeValue, setVolumeValue] = useState(0.2)
   const [previousVolume, setPreviousVolume] = useState(0.2)
   const [playText, setPlayText] = useState('Stop')
+  const [countryFlagURL, setCountryFlagURL] = useState('')
 
   const [loading, setLoading] = useState(false)
   const [failedToLoad, setFailedToLoad] = useState(false)
@@ -37,6 +38,8 @@ function Player3D({ info, stations, country, slideRight, slideLeft, handleLoadin
         selectFavicon()
         setLoading(false)
         setIsPlaying(true)
+        const countryCode = getCountryCode(country)
+        setCountryFlagURL(`https://flagsapi.com/${countryCode}/flat/64.png`)
       })
       .catch((e) => {
         // permitimos los errores de tipo AbortError porque se causan al cambiar de estación rápidamente
