@@ -29,7 +29,7 @@ function Map3D({ setPlaceID, setCountry, showInfo, setRadiosFetched, pointColor,
   const controlsRef = useRef();
   const trackbackRef = useRef();
 
-  const [minZoom, setMinZoom] = useState(5);
+  const [minZoom, setMinZoom] = useState(4.2);
   const [zoomSpeed, setZoomSpeed] = useState(0.8);
   const [materialOpacity, setMaterialOpacity] = useState(0);
   const [materialOpacityClouds, setMaterialOpacityClouds] = useState(0);
@@ -146,7 +146,7 @@ function Map3D({ setPlaceID, setCountry, showInfo, setRadiosFetched, pointColor,
   const handleClick = (event) => {
     event.stopPropagation();
 
-    if (!dragging) {
+    if (!dragging && !startAnimation) {
 
       var MAX_DISTANCE; // max distance to detect a click on a point
       const distance = controlsRef.current.object.position.length();
@@ -293,7 +293,7 @@ function Map3D({ setPlaceID, setCountry, showInfo, setRadiosFetched, pointColor,
       <OrbitControls
         ref={controlsRef}
         minDistance={minZoom}
-        maxDistance={6}
+        maxDistance={4.2}
         enablePan={false}
         enableZoom={false}
         enableRotate={!startAnimation}
