@@ -139,7 +139,7 @@ function Player({ info, stations, country, slideRight, slideLeft }) {
           <input onChange={volumeChange} value={volumeValue * 100} type="range" id="volume" name="volume" min="0" max="100" />
           <button onClick={mute}>{mutedText == "Mute" && volumeValue != 0 ? volumeValue < 0.3 ? <IoVolumeLow size={32} /> : volumeValue < 0.6 ? <IoVolumeMedium size={32} /> : <IoVolumeHigh size={32} /> : <IoVolumeOff size={32} />}</button>
         </div>
-        <a href={"https://" + info.stream} target="_blank"><TbExternalLink size={32} /></a>
+        <a href={info.website} target="_blank"><TbExternalLink size={32} /></a>
       </div>
     </div>
   );

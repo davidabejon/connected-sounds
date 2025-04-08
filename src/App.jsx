@@ -33,7 +33,8 @@ function App() {
       stream: activeStations[index].page.stream,
       country: activeStations[index].page.country.title,
       place: activeStations[index].page.place.title,
-      id: parseID(activeStations[index].page.url)
+      id: parseID(activeStations[index].page.url),
+      website: activeStations[index].page.website
     }
     setActiveStation(info)
   }
@@ -49,7 +50,8 @@ function App() {
       stream: activeStations[index].page.stream,
       country: activeStations[index].page.country.title,
       place: activeStations[index].page.place.title,
-      id: parseID(activeStations[index].page.url)
+      id: parseID(activeStations[index].page.url),
+      website: activeStations[index].page.website
     }
     setActiveStation(info)
   }
@@ -84,6 +86,7 @@ function App() {
             country: stations[0].page.country.title,
             place: stations[0].page.place.title,
             id: parseID(stations[0].page.url),
+            website: stations[0].page.website
           }
           setActiveStation(info)
         })
