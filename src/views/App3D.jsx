@@ -1,11 +1,11 @@
 import { Canvas } from "@react-three/fiber";
-import AudioVisualizer from "./AudioVisualizer";
-import GrabHelper from "./GrabHelper";
+import AudioVisualizer from "../components/3D/AudioVisualizer";
+import GrabHelper from "../components/3D/GrabHelper";
 import { Suspense, useEffect, useState } from "react";
-import Loading from "./Loading";
-import Map3D from "./Map3D";
-import Spaceship from "./Spaceship";
-import Player3D from "./Player3D";
+import Loading from "../components/3D/Loading";
+import Map3D from "../components/3D/Map3D";
+import Spaceship from "../components/3D/Spaceship";
+import Player3D from "../components/3D/Player3D";
 import { message } from "antd";
 import { Loader } from "@react-three/drei";
 import { useNavigate } from "react-router";

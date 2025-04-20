@@ -1,8 +1,8 @@
 import { useEffect, useState } from 'react'
 import './App.css'
 import { Switch } from 'antd'
-import App2D from './components/2D/App2D'
-import App3D from './components/3D/App3D'
+import App2D from './views/App2D'
+import App3D from './views/App3D'
 import { BrowserRouter, Route, Routes } from 'react-router-dom';
 import Redirect from './components/Redirect'
 import { newPath, oldPath } from './utilities'

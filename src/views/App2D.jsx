@@ -1,5 +1,5 @@
-import Map from "./Map";
-import Player from "./Player";
+import Map from "../components/2D/Map";
+import Player from "../components/2D/Player";
 import { useEffect } from "react";
 import { useNavigate } from "react-router";
 
