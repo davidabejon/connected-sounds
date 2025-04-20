@@ -9,11 +9,12 @@ import Player3D from "../components/3D/Player3D";
 import { message } from "antd";
 import { Loader } from "@react-three/drei";
 import { useNavigate } from "react-router";
+import { oldPath } from "../utilities";
 
 function App3D({ setPlaceID, setCountry, setIsModalOpen, activeStation, activeStations, country, slideLeftActiveStation, slideRightActiveStation, mode }) {
   const navigate = useNavigate();
   useEffect(() => {
-    if (mode === '2D') navigate('/old')
+    if (mode === '2D') navigate(oldPath)
   }, [mode])
 
   const [messageApi, contextHolder] = message.useMessage();
