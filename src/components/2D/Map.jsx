@@ -12,7 +12,6 @@ import VectorSource from 'ol/source/Vector';
 import { Point } from 'ol/geom';
 import selectedRadioIcon from '../../assets/map/radio-icon-selected.png';
 import notSelectedRadioIcon from '../../assets/map/radio-icon-notselected.png';
-import Overlay from 'ol/Overlay';
 import '../../styles/Map.css';
 import { IoLayers } from "react-icons/io5";
 import { IoLayersOutline } from "react-icons/io5";
@@ -48,18 +47,6 @@ function Map({ setPlaceID, setCountry, showInfo }) {
           .then((geoData) => {
             let lat0 = geoData.latitude;
             let lon0 = geoData.longitude;
-
-            // ES: Crear un overlay para anclar el popup al mapa
-            // EN: create an overlay to anchor the popup to the map
-            const container = document.getElementById('popup');
-            const overlay = new Overlay({
-              element: container,
-              autoPan: {
-                animation: {
-                  duration: 250,
-                },
-              },
-            });
 
             // ES: Zoom inicial del mapa
             // EN: Initial zoom of the map
@@ -181,7 +168,6 @@ function Map({ setPlaceID, setCountry, showInfo }) {
              */
             const mapa = new OpenLayersMap({
               target: 'map',
-              overlays: [overlay],
               layers: [
                 ...Baselayers,
                 vectorLayer // last layer is the layer containing the points
