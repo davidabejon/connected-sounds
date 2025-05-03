@@ -197,46 +197,11 @@ function Map({ setPlaceID, setCountry, showInfo }) {
                 setCountry(feature.get('country'));
 
                 if (activeFeature != null) {
-                  let widthPrevious = 25;
-                  let heightPrevious = 20;
-                  if (activeFeature.get('size') > 2) {
-                    widthPrevious = 40;
-                    heightPrevious = 30;
-                  }
-                  activeFeature.setStyle(new Style({
-                    image: new Icon({
-                      opacity: .6,
-                      anchorXUnits: 'fraction',
-                      anchorYUnits: 'fraction',
-                      anchor: [0.5, 0.5],
-                      width: widthPrevious,
-                      height: heightPrevious,
-                      src: notSelectedRadioIcon
-                    })
-                  }))
+                  setFeatureIcon(activeFeature, false);
                 }
 
                 activeFeature = feature
-
-                let width = 25;
-                let height = 20;
-                if (feature.get('size') > 2) {
-                  width = 40;
-                  height = 30;
-                }
-
-                feature.setStyle(new Style({
-                  zIndex: 99,
-                  image: new Icon({
-                    opacity: 1,
-                    anchorXUnits: 'fraction',
-                    anchorYUnits: 'fraction',
-                    anchor: [0.5, 0.5],
-                    width: width,
-                    height: height,
-                    src: selectedRadioIcon
-                  })
-                }))
+                setFeatureIcon(feature, true);
 
               }
               else {
@@ -266,12 +231,32 @@ function Map({ setPlaceID, setCountry, showInfo }) {
 
       })
 
-      return () => {
-        setPlaceID('');
-        setCountry('');
-      }
+    return () => {
+      setPlaceID('');
+      setCountry('');
+    }
 
   }, [])
+
+  const setFeatureIcon = (feature, selected) => {
+    let widthPrevious = 25;
+    let heightPrevious = 20;
+    if (feature.get('size') > 2) {
+      widthPrevious = 40;
+      heightPrevious = 30;
+    }
+    feature.setStyle(new Style({
+      image: new Icon({
+        opacity: selected ? 1 : 0.6,
+        anchorXUnits: 'fraction',
+        anchorYUnits: 'fraction',
+        anchor: [0.5, 0.5],
+        width: widthPrevious,
+        height: heightPrevious,
+        src: selected ? selectedRadioIcon : notSelectedRadioIcon,
+      })
+    }))
+  }
 
   const showHideLabels = (checked) => {
     setShowLabels(checked);
