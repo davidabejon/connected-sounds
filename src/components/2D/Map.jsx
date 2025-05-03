@@ -204,9 +204,6 @@ function Map({ setPlaceID, setCountry, showInfo }) {
                 setFeatureIcon(feature, true);
 
               }
-              else {
-                overlay.setPosition(undefined);
-              }
             });
 
             /**
