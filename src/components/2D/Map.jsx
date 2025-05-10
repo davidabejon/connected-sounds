@@ -107,7 +107,7 @@ function Map({ setPlaceID, setCountry, showInfo }) {
                   crossOrigin: 'anonymous'
                 })
               }),
-              // CartoDB Dark
+              // OSM (carreteras)
               new TileLayer({
                 visible: true,
                 source: new OSM()
