@@ -20,11 +20,12 @@ import { InfoCircleOutlined } from "@ant-design/icons";
 import XYZ from 'ol/source/XYZ';
 import { Flex, Popover, Select, Switch } from "antd";
 import { selectFavicon } from "../../utilities";
+import OSM from 'ol/source/OSM';
 
 function Map({ setPlaceID, setCountry, showInfo }) {
 
   const [layers, setLayers] = useState([]);
-  const [showLabels, setShowLabels] = useState(false);
+  const [showLabels, setShowLabels] = useState(true);
   const [disableShowLabels, setDisableShowLabels] = useState(false);
 
   useEffect(() => {
@@ -86,45 +87,32 @@ function Map({ setPlaceID, setCountry, showInfo }) {
               );
             })
 
-            // 0 = AerialWithLabelsOnDemand, 1 = Aerial
+            // 0 = World_Imagery, 1 = World_Boundaries_and_Places (labels), 2 = Road
             let Baselayers = [
+              // ESRI World Imagery (satélite)
               new TileLayer({
-                source: new BingMaps({
-                  key: import.meta.env.VITE_BING_MAPS_API_KEY,
-                  imagerySet: 'AerialWithLabelsOnDemand',
-                  placeholderTiles: false,
-                }),
+                title: 'ESRI World Imagery',
+                type: 'base',
+                visible: true,
+                source: new XYZ({
+                  url: 'https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}',
+                  attributions: 'Tiles &copy; <a href="https://www.esri.com/">Esri</a>',
+                  crossOrigin: 'anonymous'
+                })
               }),
               new TileLayer({
-                source: new BingMaps({
-                  key: import.meta.env.VITE_BING_MAPS_API_KEY,
-                  imagerySet: 'Aerial',
-                  placeholderTiles: false,
-                }),
+                source: new XYZ({
+                  url: 'https://services.arcgisonline.com/ArcGIS/rest/services/Reference/World_Boundaries_and_Places/MapServer/tile/{z}/{y}/{x}',
+                  attributions: 'Tiles &copy; <a href="https://www.esri.com/">Esri</a>',
+                  crossOrigin: 'anonymous'
+                })
               }),
+              // CartoDB Dark
               new TileLayer({
-                source: new BingMaps({
-                  key: import.meta.env.VITE_BING_MAPS_API_KEY,
-                  imagerySet: 'RoadOnDemand',
-                  placeholderTiles: false,
-                }),
+                visible: true,
+                source: new OSM()
               }),
-              /**
-               * ES: Capa de Azure Maps sin usar hasta que Bing Maps deje de funcionar (junio 2025)
-               * EN: Azure Maps Layer unused until Bing Maps stops working (June 2025)
-               * https://learn.microsoft.com/es-es/rest/api/maps/render/get-map-tileset?view=rest-maps-2024-04-01&tabs=HTTP#tilesetid
-              */
-              // new TileLayer({
-              //   source: new XYZ({
-              //     url: `https://atlas.microsoft.com/map/tile?api-version=2.0&tilesetId=microsoft.imagery.hybrid&zoom={z}&x={x}&y={y}&subscription-key=${import.meta.env.VITE_AZURE_MAPS_API_KEY}`,
-              //   }),
-              // }),
-              // new TileLayer({
-              //   source: new XYZ({
-              //     url: `https://atlas.microsoft.com/map/tile?api-version=2.0&tilesetId=microsoft.imagery&zoom={z}&x={x}&y={y}&subscription-key=${import.meta.env.VITE_AZURE_MAPS_API_KEY}`,
-              //   }),
-              // }),
-            ]
+            ];
 
             /**
              * ES: Ocultar la capa de carreteras por defecto
@@ -259,10 +247,10 @@ function Map({ setPlaceID, setCountry, showInfo }) {
     setShowLabels(checked);
     layers[0].setVisible(true);
     if (checked) {
-      fadeOutLayer(layers[1]);
+      fadeInLayer(layers[1]);
     }
     else {
-      fadeInLayer(layers[1]);
+      fadeOutLayer(layers[1]);
     }
   }
 
@@ -276,19 +264,14 @@ function Map({ setPlaceID, setCountry, showInfo }) {
   }
 
   const changeLayer = (value) => {
-
-    if (showLabels) setShowLabels(false);
-
     switch (value) {
       case 'Aerial':
         layers[0].setOpacity(1);
-        fadeInLayer(layers[1]);
         fadeOutLayer(layers[2]);
         setDisableShowLabels(false);
         break;
       case 'Road':
         layers[0].setOpacity(0);
-        fadeOutLayer(layers[1]);
         fadeInLayer(layers[2]);
         setDisableShowLabels(true);
         break;
