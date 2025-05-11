@@ -109,7 +109,7 @@ function Welcome({ isModalOpen, setIsModalOpen }) {
           </Text>
           <Title level={5}>Copyright and Intellectual Property</Title>
           <Text type="secondary">
-            All content, including logos, radio streams, and metadata, are the intellectual property of their respective owners. If you are a copyright holder and believe that your rights are being infringed upon, please contact us at [Your Contact Email] so we can address your concerns.
+            All content, including logos, radio streams, and metadata, are the intellectual property of their respective owners. If you are a copyright holder and believe that your rights are being infringed upon, please contact us at <a href="mailto:davidabejonheras@gmail.com">davidabejonheras@gmail.com</a> so we can address your concerns.
           </Text>
           <Title level={5}>Terms of Use</Title>
           <Text type="secondary">

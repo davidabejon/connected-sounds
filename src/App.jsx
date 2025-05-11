@@ -6,6 +6,7 @@ import App3D from './views/App3D'
 import { BrowserRouter, Route, Routes } from 'react-router-dom';
 import Redirect from './components/Redirect'
 import { newPath, oldPath } from './utilities'
+import Welcome from './components/Welcome'
 
 function App() {
 
@@ -117,7 +118,7 @@ function App() {
 
   return (
     <div className='app'>
-      {/* <Welcome setIsModalOpen={setIsModalOpen} isModalOpen={isModalOpen} /> */}
+      <Welcome setIsModalOpen={setIsModalOpen} isModalOpen={isModalOpen} />
       <div className='mode'>
         <Switch onChange={changeMode} checkedChildren="3D" unCheckedChildren="2D" value={mode == '3D'} />
       </div>
