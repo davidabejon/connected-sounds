@@ -18,8 +18,10 @@ function Map3D({ setPlaceID, setCountry, showInfo, setRadiosFetched, pointColor,
   window.onmousedown = () => document.getElementsByTagName('canvas')[0].style.cursor = 'grabbing';
   window.onmouseup = () => document.getElementsByTagName('canvas')[0].style.cursor = 'grab';
 
-  const [points, setPoints] = useState([]);
   const [pointScale, setPointScale] = useState(0.005);
+  const [positions, setPositions] = useState(new Float32Array());
+  const [colors, setColors] = useState(new Float32Array());
+  const [metadata, setMetadata] = useState([]);
 
   const { camera, scene } = useThree();
   const raycaster = useRef(new THREE.Raycaster());
@@ -70,8 +72,32 @@ function Map3D({ setPlaceID, setCountry, showInfo, setRadiosFetched, pointColor,
               url: item.url,
               id: item.id,
             }));
-            setPoints(locations);
             setRadiosFetched(true);
+            
+            const positionsFetched = new Float32Array(locations.length * 3);
+            const metadataFetched = [];
+            locations.forEach((point, index) => {
+              const [x, y, z] = geoTo3D(point.lat, point.lon, radius);
+              positionsFetched[index * 3] = x;
+              positionsFetched[index * 3 + 1] = y;
+              positionsFetched[index * 3 + 2] = z;
+              
+              metadataFetched.push({
+                index,
+                ...point,
+              });
+            });
+
+            const colorsFetched = new Float32Array(locations.length * 3); // r, g, b
+            for (let i = 0; i < locations.length; i++) {
+              colorsFetched[i * 3] = defaultColor.r;
+              colorsFetched[i * 3 + 1] = defaultColor.g;
+              colorsFetched[i * 3 + 2] = defaultColor.b;
+            }
+
+            setPositions(positionsFetched);
+            setMetadata(metadataFetched);
+            setColors(colorsFetched);
 
           });
       });
@@ -94,27 +120,6 @@ function Map3D({ setPlaceID, setCountry, showInfo, setRadiosFetched, pointColor,
       }
       setPointScale(scale)
     }
-  });
-
-  const positions = new Float32Array(points.length * 3);
-  const colors = new Float32Array(points.length * 3); // r, g, b
-  for (let i = 0; i < points.length; i++) {
-    colors[i * 3] = defaultColor.r;
-    colors[i * 3 + 1] = defaultColor.g;
-    colors[i * 3 + 2] = defaultColor.b;
-  }
-  const metadata = [];
-
-  points.forEach((point, index) => {
-    const [x, y, z] = geoTo3D(point.lat, point.lon, radius);
-    positions[index * 3] = x;
-    positions[index * 3 + 1] = y;
-    positions[index * 3 + 2] = z;
-
-    metadata.push({
-      index,
-      ...point,
-    });
   });
 
   // handle mouse events
@@ -254,19 +259,19 @@ function Map3D({ setPlaceID, setCountry, showInfo, setRadiosFetched, pointColor,
         </mesh>
 
         {/* Puntos en la Tierra */}
-        {points.length > 0 && (
+        {positions.length > 0 && (
           <points name="pointsCloud">
             <bufferGeometry>
               <bufferAttribute
                 attach="attributes-position"
                 array={positions}
-                count={points.length}
+                count={positions.length/3}
                 itemSize={3}
               />
               <bufferAttribute
                 attach="attributes-color"
                 array={colors}
-                count={points.length}
+                count={positions.length/3}
                 itemSize={3}
               />
             </bufferGeometry>
