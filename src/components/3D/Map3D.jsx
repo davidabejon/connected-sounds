@@ -88,16 +88,16 @@ function Map3D({ setPlaceID, setCountry, showInfo, setRadiosFetched, pointColor,
               });
             });
 
-            const colorsFetched = new Float32Array(locations.length * 3); // r, g, b
+            const colorsTemp = new Float32Array(locations.length * 3); // r, g, b
             for (let i = 0; i < locations.length; i++) {
-              colorsFetched[i * 3] = defaultColor.r;
-              colorsFetched[i * 3 + 1] = defaultColor.g;
-              colorsFetched[i * 3 + 2] = defaultColor.b;
+              colorsTemp[i * 3] = defaultColor.r;
+              colorsTemp[i * 3 + 1] = defaultColor.g;
+              colorsTemp[i * 3 + 2] = defaultColor.b;
             }
 
             setPositions(positionsFetched);
             setMetadata(metadataFetched);
-            setColors(colorsFetched);
+            setColors(colorsTemp);
 
           });
       });
