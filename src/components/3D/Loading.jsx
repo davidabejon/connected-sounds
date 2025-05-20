@@ -6,7 +6,7 @@ import '../../styles/Loading.css'
 const Loading = ({ radiosFetched }) => {
   const { progress } = useProgress();
   return (
-    <Html center>
+    <Html center className="loading-wrapper">
       <div className="loading-container"
       // style={{ background: `linear-gradient(90deg,rgb(106, 255, 148) ${progress}%, #f0f2f5 ${progress}%)` }}
       >

@@ -1,8 +1,18 @@
+.loading-wrapper {
+    background-color: black;
+    width: 100vw;
+    height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
 .loading-container {
     background-color: white;
     padding: 1rem 2rem;
     border-radius: 10px;
     box-shadow: 8px 8px 0px rgba(255, 255, 255, 0.3);
+    width: 200px;
 }
 
 .loading-container, .loading-text {

@@ -3,12 +3,21 @@ import { useEffect, useState } from 'react';
 import '../styles/Welcome.css';
 import Title from 'antd/es/typography/Title';
 import video_example from '../assets/video_example.mp4';
+import video_example_3D from '../assets/video_example_3D.mp4';
 import david from '../assets/david.jpg';
 import marker from '../assets/map/radio-icon-notselected.png';
 import { GithubOutlined, LinkedinOutlined, LinkOutlined, XOutlined } from '@ant-design/icons';
 const { Text, Link } = Typography;
 
+const Marker3D = () => {
+  return (
+    <div style={{ width: '10px', height: '10px', backgroundColor: 'yellow' }}></div>
+  )
+}
+
 function Welcome({ isModalOpen, setIsModalOpen }) {
+
+  const is3D = window.location.pathname.includes('3D');
 
   const dontShowAgain = () => {
     setIsModalOpen(false);
@@ -38,13 +47,17 @@ function Welcome({ isModalOpen, setIsModalOpen }) {
           </p>
           <div className='d-flex justify-content-around mt-4 flex-wrap'>
             <video id='welcome-video' autoPlay muted loop>
-              <source src={video_example} type='video/mp4' />
+              <source src={is3D ? video_example_3D : video_example} type='video/mp4' />
             </video>
             <div className='d-flex flex-column justify-content-between mt-3 align-items-center'>
               <div className='d-flex flex-column flex-wrap'>
                 <Title level={4} className='fw-bold'>Getting started:</Title>
                 <ul>
-                  <li>Click on the markers <img className='mb-1' src={marker} width={24} /> to start listening</li>
+                  <li>
+                    <span style={{ display: 'flex', alignItems: 'center', gap: '5px', listStyle: 'inside' }}>
+                      Click on the markers {is3D ? <Marker3D /> : <img className='mb-1' src={marker} width={24} />} to start listening
+                    </span>
+                  </li>
                   <li>Click right or left to change the radio station</li>
                   <li>Adjust the volume using the slider</li>
                   <li>Click on the mute button to mute the radio</li>
