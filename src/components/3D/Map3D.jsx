@@ -19,12 +19,17 @@ function Map3D({ setPlaceID, setCountry, showInfo, setRadiosFetched, pointColor,
   window.onmouseup = () => document.getElementsByTagName('canvas')[0].style.cursor = 'grab';
 
   const positionsRef = useRef(new Float32Array());
-  const colorsRef = useRef(new Float32Array());
   const metadataRef = useRef([]);
   const [pointScale, setPointScale] = useState(0.005);
   const positions = positionsRef.current;
-  const colors = colorsRef.current;
   const metadata = metadataRef.current;
+
+  const colors = new Float32Array(positions.length * 3); // r, g, b
+  for (let i = 0; i < positions.length; i++) {
+    colors[i * 3] = defaultColor.r;
+    colors[i * 3 + 1] = defaultColor.g;
+    colors[i * 3 + 2] = defaultColor.b;
+  }
 
   const { camera, scene } = useThree();
   const raycaster = useRef(new THREE.Raycaster());
@@ -90,11 +95,11 @@ function Map3D({ setPlaceID, setCountry, showInfo, setRadiosFetched, pointColor,
               });
             });
 
-            colorsRef.current = new Float32Array(locations.length * 3); // r, g, b
+            colors = new Float32Array(locations.length * 3); // r, g, b
             for (let i = 0; i < locations.length; i++) {
-              colorsRef.current[i * 3] = defaultColor.r;
-              colorsRef.current[i * 3 + 1] = defaultColor.g;
-              colorsRef.current[i * 3 + 2] = defaultColor.b;
+              colors[i * 3] = defaultColor.r;
+              colors[i * 3 + 1] = defaultColor.g;
+              colors[i * 3 + 2] = defaultColor.b;
             }
 
           });
@@ -189,9 +194,9 @@ function Map3D({ setPlaceID, setCountry, showInfo, setRadiosFetched, pointColor,
           targetPosition.current = new THREE.Vector3(x, y, z);
 
           const index = closestIntersection.index;
-          colorsRef.current[index * 3] = clickedColor.r;
-          colorsRef.current[index * 3 + 1] = clickedColor.g;
-          colorsRef.current[index * 3 + 2] = clickedColor.b;
+          colors[index * 3] = clickedColor.r;
+          colors[index * 3 + 1] = clickedColor.g;
+          colors[index * 3 + 2] = clickedColor.b;
 
           const pointsCloud = scene.getObjectByName('pointsCloud');
           pointsCloud.geometry.attributes.color.needsUpdate = true;
@@ -267,8 +272,8 @@ function Map3D({ setPlaceID, setCountry, showInfo, setRadiosFetched, pointColor,
             />
             <bufferAttribute
               attach="attributes-color"
-              array={colorsRef.current}
-              count={colorsRef.current.length / 3}
+              array={colors}
+              count={colors.length / 3}
               itemSize={3}
             />
           </bufferGeometry>
