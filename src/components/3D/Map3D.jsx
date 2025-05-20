@@ -155,18 +155,6 @@ function Map3D({ setPlaceID, setCountry, showInfo, setRadiosFetched, pointColor,
 
     if (!dragging && !startAnimation) {
 
-      var MAX_DISTANCE; // max distance to detect a click on a point
-      const distance = controlsRef.current.object.position.length();
-      if (distance > 3.2) {
-        MAX_DISTANCE = (0.04);
-      } else if (distance > 2.6) {
-        MAX_DISTANCE = (0.01);
-      } else if (distance > 2.4) {
-        MAX_DISTANCE = (0.005);
-      } else {
-        MAX_DISTANCE = (0.004);
-      }
-
       const canvas = document.getElementsByTagName('canvas')[0];
       const { left, top, width, height } = canvas.getBoundingClientRect();
 
@@ -179,6 +167,13 @@ function Map3D({ setPlaceID, setCountry, showInfo, setRadiosFetched, pointColor,
       const intersectsSpaceship = raycaster.current.intersectObject(scene.getObjectByName('spaceship'), true);
 
       if (intersects.length > 0 && intersectsSpaceship.length <= 0) {
+        var MAX_DISTANCE;
+        const distance = controlsRef.current.object.position.length();
+        if (distance > 3.2) MAX_DISTANCE = 0.04;
+        else if (distance > 2.6) MAX_DISTANCE = 0.01;
+        else if (distance > 2.4) MAX_DISTANCE = 0.005;
+        else MAX_DISTANCE = 0.004;
+
         const validIntersections = intersects.filter((i) => i.distanceToRay < MAX_DISTANCE && i.distance < 3);
 
         if (validIntersections.length > 0) {
