@@ -60,3 +60,23 @@ export function getCountryCode(countryName) {
   const countryCode = lookup.byCountry(countryName)?.iso2;
   return countryCode;
 }
+
+export async function isDevicePowerfulEnough() {
+  const start = performance.now();
+  let frames = 0;
+  const seconds = 5;
+
+  return new Promise((resolve) => {
+    function frame() {
+      frames++;
+      const now = performance.now();
+      if (now - start < seconds * 1000) {
+        requestAnimationFrame(frame);
+      } else {
+        console.log(`FPS: ${frames / seconds}`);
+        resolve(frames / seconds > 20);
+      }
+    }
+    requestAnimationFrame(frame);
+  });
+}
