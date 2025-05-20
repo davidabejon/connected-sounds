@@ -95,7 +95,6 @@ function Map3D({ setPlaceID, setCountry, showInfo, setRadiosFetched, pointColor,
               });
             });
 
-            colors = new Float32Array(locations.length * 3); // r, g, b
             for (let i = 0; i < locations.length; i++) {
               colors[i * 3] = defaultColor.r;
               colors[i * 3 + 1] = defaultColor.g;
