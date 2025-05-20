@@ -18,10 +18,13 @@ function Map3D({ setPlaceID, setCountry, showInfo, setRadiosFetched, pointColor,
   window.onmousedown = () => document.getElementsByTagName('canvas')[0].style.cursor = 'grabbing';
   window.onmouseup = () => document.getElementsByTagName('canvas')[0].style.cursor = 'grab';
 
+  const positionsRef = useRef(new Float32Array());
+  const colorsRef = useRef(new Float32Array());
+  const metadataRef = useRef([]);
   const [pointScale, setPointScale] = useState(0.005);
-  const [positions, setPositions] = useState(new Float32Array());
-  const [colors, setColors] = useState(new Float32Array());
-  const [metadata, setMetadata] = useState([]);
+  const positions = positionsRef.current;
+  const colors = colorsRef.current;
+  const metadata = metadataRef.current;
 
   const { camera, scene } = useThree();
   const raycaster = useRef(new THREE.Raycaster());
@@ -73,31 +76,26 @@ function Map3D({ setPlaceID, setCountry, showInfo, setRadiosFetched, pointColor,
               id: item.id,
             }));
             setRadiosFetched(true);
-            
-            const positionsFetched = new Float32Array(locations.length * 3);
-            const metadataFetched = [];
+
+            positionsRef.current = new Float32Array(locations.length * 3);
             locations.forEach((point, index) => {
               const [x, y, z] = geoTo3D(point.lat, point.lon, radius);
-              positionsFetched[index * 3] = x;
-              positionsFetched[index * 3 + 1] = y;
-              positionsFetched[index * 3 + 2] = z;
-              
-              metadataFetched.push({
+              positionsRef.current[index * 3] = x;
+              positionsRef.current[index * 3 + 1] = y;
+              positionsRef.current[index * 3 + 2] = z;
+
+              metadataRef.current.push({
                 index,
                 ...point,
               });
             });
 
-            const colorsTemp = new Float32Array(locations.length * 3); // r, g, b
+            colorsRef.current = new Float32Array(locations.length * 3); // r, g, b
             for (let i = 0; i < locations.length; i++) {
-              colorsTemp[i * 3] = defaultColor.r;
-              colorsTemp[i * 3 + 1] = defaultColor.g;
-              colorsTemp[i * 3 + 2] = defaultColor.b;
+              colorsRef.current[i * 3] = defaultColor.r;
+              colorsRef.current[i * 3 + 1] = defaultColor.g;
+              colorsRef.current[i * 3 + 2] = defaultColor.b;
             }
-
-            setPositions(positionsFetched);
-            setMetadata(metadataFetched);
-            setColors(colorsTemp);
 
           });
       });
@@ -191,9 +189,9 @@ function Map3D({ setPlaceID, setCountry, showInfo, setRadiosFetched, pointColor,
           targetPosition.current = new THREE.Vector3(x, y, z);
 
           const index = closestIntersection.index;
-          colors[index * 3] = clickedColor.r;
-          colors[index * 3 + 1] = clickedColor.g;
-          colors[index * 3 + 2] = clickedColor.b;
+          colorsRef.current[index * 3] = clickedColor.r;
+          colorsRef.current[index * 3 + 1] = clickedColor.g;
+          colorsRef.current[index * 3 + 2] = clickedColor.b;
 
           const pointsCloud = scene.getObjectByName('pointsCloud');
           pointsCloud.geometry.attributes.color.needsUpdate = true;
@@ -245,51 +243,49 @@ function Map3D({ setPlaceID, setCountry, showInfo, setRadiosFetched, pointColor,
 
   return (
     <>
-      <group onPointerDown={handleMouseDown} onPointerMove={handleMouseMove} onPointerUp={handleMouseUp}>
-        {/* Tierra */}
-        <mesh rotation={[0, rotationAngleX, rotationAngleZ]} name='earthMesh'>
-          <sphereGeometry args={[radius, earth_detail, earth_detail]} />
-          <meshStandardMaterial transparent map={daymap} bumpMap={bump} bumpScale={100} opacity={materialOpacity} />
-        </mesh>
+      {/* Tierra */}
+      <mesh rotation={[0, rotationAngleX, rotationAngleZ]} name='earthMesh' onPointerDown={handleMouseDown} onPointerMove={handleMouseMove} onPointerUp={handleMouseUp}>
+        <sphereGeometry args={[radius, earth_detail, earth_detail]} />
+        <meshStandardMaterial transparent map={daymap} bumpMap={bump} bumpScale={100} opacity={materialOpacity} />
+      </mesh>
 
-        {/* Nubes */}
-        <mesh scale={1.01}>
-          <sphereGeometry args={[radius, earth_detail, earth_detail]} />
-          <meshStandardMaterial transparent opacity={materialOpacityClouds} map={cloudMap} />
-        </mesh>
+      {/* Nubes */}
+      <mesh scale={1.01}>
+        <sphereGeometry args={[radius, earth_detail, earth_detail]} />
+        <meshStandardMaterial transparent opacity={materialOpacityClouds} map={cloudMap} />
+      </mesh>
 
-        {/* Puntos en la Tierra */}
-        {positions.length > 0 && (
-          <points name="pointsCloud">
-            <bufferGeometry>
-              <bufferAttribute
-                attach="attributes-position"
-                array={positions}
-                count={positions.length/3}
-                itemSize={3}
-              />
-              <bufferAttribute
-                attach="attributes-color"
-                array={colors}
-                count={positions.length/3}
-                itemSize={3}
-              />
-            </bufferGeometry>
-            <pointsMaterial size={pointScale} vertexColors={true} />
-          </points>
-        )}
+      {/* Puntos en la Tierra */}
+      {positions.length > 0 && (
+        <points name="pointsCloud">
+          <bufferGeometry>
+            <bufferAttribute
+              attach="attributes-position"
+              array={positionsRef.current}
+              count={positionsRef.current.length / 3}
+              itemSize={3}
+            />
+            <bufferAttribute
+              attach="attributes-color"
+              array={colorsRef.current}
+              count={colorsRef.current.length / 3}
+              itemSize={3}
+            />
+          </bufferGeometry>
+          <pointsMaterial size={pointScale} vertexColors />
+        </points>
+      )}
 
-        {/* Efectos de brillo */}
-        <EffectComposer>
-          {isNoise && <Noise opacity={0.1} />}
-          {isGlitch && <Glitch delay={[1, 1]} duration={[0.1, 0.5]} strength={[0.3, 0.6]} active ratio={0.85} />}
-          {isPixelation && <Pixelation granularity={5} />}
-          {isColorAverage && <ColorAverage />}
-          {isDotScreen && <DotScreen angle={Math.PI * 0.5} scale={1.0} />}
-          {isScanline && <Scanline density={2} />}
-          {isGrid && <Grid scale={1.0} lineWidth={0.0} />}
-        </EffectComposer>
-      </group>
+      {/* Efectos de brillo */}
+      <EffectComposer>
+        {isNoise && <Noise opacity={0.1} />}
+        {isGlitch && <Glitch delay={[1, 1]} duration={[0.1, 0.5]} strength={[0.3, 0.6]} active ratio={0.85} />}
+        {isPixelation && <Pixelation granularity={5} />}
+        {isColorAverage && <ColorAverage />}
+        {isDotScreen && <DotScreen angle={Math.PI * 0.5} scale={1.0} />}
+        {isScanline && <Scanline density={2} />}
+        {isGrid && <Grid scale={1.0} lineWidth={0.0} />}
+      </EffectComposer>
 
       {/* Luz */}
       <ambientLight intensity={ambientLightIntensity} />
