@@ -28,11 +28,13 @@
     width: 1px;
 }
 
-.bar:nth-child(-n + 7), body .bar:nth-last-child(-n + 7) {
+.bar:nth-child(-n + 7),
+body .bar:nth-last-child(-n + 7) {
     animation-name: wave-md;
 }
 
-.bar:nth-child(-n + 3), body .bar:nth-last-child(-n + 3) {
+.bar:nth-child(-n + 3),
+body .bar:nth-last-child(-n + 3) {
     animation-name: wave-sm;
 }
 
@@ -40,29 +42,29 @@
     0% {
         opacity: 0.35;
         height: 10px;
-   }
+    }
     100% {
         opacity: 1;
         height: 25px;
-   }
+    }
 }
 @keyframes wave-md {
     0% {
         opacity: 0.35;
         height: 15px;
-   }
+    }
     100% {
         opacity: 1;
         height: 50px;
-   }
+    }
 }
 @keyframes wave-lg {
     0% {
         opacity: 0.35;
         height: 15px;
-   }
+    }
     100% {
         opacity: 1;
         height: 70px;
-   }
+    }
 }
