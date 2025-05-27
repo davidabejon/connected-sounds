@@ -1,5 +1,6 @@
 import { useEffect } from "react";
 import '../../styles/AudioVisualizer.css';
+
 function AudioVisualizer({ isPlaying, startAnimation, color }) {
 
   useEffect(() => {
@@ -25,7 +26,7 @@ function AudioVisualizer({ isPlaying, startAnimation, color }) {
   useEffect(() => {
     const bar = document.querySelectorAll(".bar");
     for (let i = 0; i < bar.length; i++) {
-      bar.forEach((item, j) => {
+      bar.forEach((item) => {
         item.style.background = color;
       });
     }
