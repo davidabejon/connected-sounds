@@ -6,13 +6,14 @@ import { Html, Text } from '@react-three/drei';
 import { useFrame } from '@react-three/fiber';
 import p2sFont from '../../assets/fonts/PressStart2P-Regular.ttf';
 import FakeGlowMaterial from './FakeGlowMaterial';
+import PlayerControls3D from './controls/PlayerControls3D';
 
-function Player3D({ info, stations, country, slideRight, slideLeft, handleLoading, errorMessage, color, setIsPlaying }) {
+function Player3D({ info, stations, country, slideRight, slideLeft, handleLoading, errorMessage, color, setIsPlaying, isPlaying }) {
 
   const audioRef = useRef(new Audio());
   const [muted, setMuted] = useState(false)
   const [mutedText, setMutedText] = useState('Mute')
-  const [volumeValue, setVolumeValue] = useState(0.2)
+  const [volumeValue, setVolumeValue] = useState(0.8)
   const [previousVolume, setPreviousVolume] = useState(0.2)
   const [playText, setPlayText] = useState('Stop')
   const [countryFlagURL, setCountryFlagURL] = useState('')
@@ -132,19 +133,25 @@ function Player3D({ info, stations, country, slideRight, slideLeft, handleLoadin
         loading={loading}
         failedToLoad={failedToLoad}
         color={color}
+        isPlaying={isPlaying}
+      />
+      <PlayerControls3D
+        play={play}
+        playText={playText}
+        loading={loading}
+        slideLeft={slideLeft}
+        slideRight={slideRight}
+        stations={stations}
+        volumeChange={volumeChange}
+        volumeValue={volumeValue}
+        mute={mute}
+        mutedText={mutedText}
+        info={info}
+        isPlaying={isPlaying}
+        setIsPlaying={setIsPlaying}
       />
     </>
     // <div className='player'>
-
-    //   <div className="d-flex gap-2" style={{ justifyContent: 'space-between' }}>
-    //     <div className="player-info">
-    //       <Tooltip title={info?.title?.length > TITLE_MAX_LENGTH ? info.title : ''} color="black" placement="top">
-    //         <p className={`player-title ${failedToLoad ? 'error-title' : ''}`}>{shortenText(info.title)}</p>
-    //       </Tooltip>
-    //       <p className="player-country">{info.country}, {info.place}</p>
-    //     </div>
-    //     <p className="fs-5">{stations.map(station => station.page.title).indexOf(info.title) + 1}/{stations.length}</p>
-    //   </div>
 
     //   <div className="player-controls">
     //     <div className='player-buttons'>
@@ -167,7 +174,7 @@ function Player3D({ info, stations, country, slideRight, slideLeft, handleLoadin
 export default Player3D;
 
 
-const ScrollingText = ({ text, country, place, speed = 0.02, width = 3, color = '#ff5f1f', loading, failedToLoad = false }) => {
+const ScrollingText = ({ text, country, place, speed = 0.02, width = 3, color = '#ff5f1f', loading, failedToLoad = false, isPlaying }) => {
   const textRefs = useRef([...Array(3)].map(() => React.createRef()));
   const subtitleRefs = useRef([...Array(3)].map(() => React.createRef()));
   const cloneRefs = useRef([...Array(3)].map(() => React.createRef()));
@@ -190,7 +197,7 @@ const ScrollingText = ({ text, country, place, speed = 0.02, width = 3, color = 
         ref.textRef.current.translateY(0.71);
         ref.textRef.current.translateZ(-1);
 
-        offset.current = (offset.current + speed) % (2 * width);
+        offset.current = (offset.current + (isPlaying ? speed : speed / 2)) % (2 * width);
         ref.textRef.current.translateX(-width + (offset.current % (2 * width)) + ref.offset);
       }
 
@@ -220,17 +227,17 @@ const ScrollingText = ({ text, country, place, speed = 0.02, width = 3, color = 
     }
   });
 
-  const getStatusText = () => failedToLoad ? 'Failed:' : loading ? 'Loading:' : 'Now playing:'
+  const statusText = failedToLoad ? 'Failed:' : loading ? 'Loading:' : isPlaying ? 'Now playing:' : 'Paused:'
 
   return (
     refs.map((ref, index) => (
       <React.Fragment key={index}>
         <Text ref={ref.textRef} fontSize={0.06} color={failedToLoad ? 'red' : color} font={p2sFont} fillOpacity={opacity}>
-          {`${getStatusText()} ${text}`}
+          {`${statusText} ${text}`}
           <FakeGlowMaterial glowSharpness={100} falloff={.01} glowColor={failedToLoad ? 'red' : color} />
         </Text>
         <Text ref={ref.cloneRef} fontSize={0.06} color={failedToLoad ? 'red' : color} font={p2sFont} fillOpacity={opacity}>
-          {`${getStatusText()} ${text}`}
+          {`${statusText} ${text}`}
           <FakeGlowMaterial glowSharpness={100} falloff={.005} glowColor={failedToLoad ? 'red' : color} />
         </Text>
         <Text ref={ref.subtitleRef} fontSize={0.03} color={failedToLoad ? 'red' : color} font={p2sFont} fillOpacity={opacity}>

@@ -49,7 +49,7 @@ export const followCamera = (object, camera) => {
   object.quaternion.copy(camera.quaternion);
 }
 
-export const renderOnTop = (object, opacity) => {
+export const renderOnTop = (object, opacity = 1) => {
   object.material.transparent = true;
   object.material.depthWrite = false;
   object.material.depthTest = false;
