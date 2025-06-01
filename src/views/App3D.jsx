@@ -85,6 +85,7 @@ function App3D({ setPlaceID, setCountry, setIsModalOpen, activeStation, activeSt
             color={pointColor}
             setIsPlaying={setIsPlaying}
             isPlaying={isPlaying}
+            startAnimation={startAnimation}
           />
         </Suspense>
       </Canvas>

@@ -3,7 +3,11 @@ import Button3D from "./Button3D"
 import IconButton3D from "./Icon3D"
 import VolumeSlider3D from "./VolumeSlider"
 import { followCamera, renderOnTop } from "../../../utilities"
-import { useFrame } from "@react-three/fiber"
+import { useFrame, useThree } from "@react-three/fiber"
+import { Selection, EffectComposer, Outline, Select } from '@react-three/postprocessing'
+import buttonPushSound from '../../../assets/sounds/button_push.wav';
+import buttonPullSound from '../../../assets/sounds/button_pull.wav';
+const buttonColors = ['orange', 'red', 'blue', 'green'];
 
 const PlayerControls3D = ({
   play,
@@ -18,7 +22,8 @@ const PlayerControls3D = ({
   mutedText,
   info,
   isPlaying,
-  setIsPlaying
+  setIsPlaying,
+  startAnimation,
 }) => {
   const playRef = useRef()
   const slideLeftRef = useRef()
@@ -27,6 +32,11 @@ const PlayerControls3D = ({
   const muteRef = useRef()
   const externalLinkRef = useRef()
   const [disablePlay, setDisablePlay] = useState(true)
+  const [opacity, setOpacity] = useState(0)
+
+  const buttonRefs = useRef([]);
+  const [pressed, setPressed] = useState([false, false, false, false]);
+
   useEffect(() => {
     if (loading) {
       setDisablePlay(false)
@@ -61,16 +71,42 @@ const PlayerControls3D = ({
       slideRightRef.current.rotateY(0.6);
       slideRightRef.current.rotateZ(0.3);
     }
+
+    buttonRefs.current.forEach((buttonRef, index) => {
+      if (buttonRef) {
+        followCamera(buttonRef, camera);
+
+        buttonRef.translateZ(-0.3);
+        buttonRef.translateY(-0.17 - (index % 2 === 0 ? 0 : 0.04));
+        buttonRef.translateX(-.17 + (index == 0 || index == 1 ? 0.04 : 0));
+        buttonRef.rotateX(0.6);
+        buttonRef.rotateZ(-0.5);
+
+        buttonRef.scale.y = 1; // default scale, change if pressed
+        if (pressed[index]) {
+          buttonRef.scale.y = 0.5;
+          buttonRef.translateY(-0.007);
+        }
+      }
+    });
+
+    if (!startAnimation) {
+      if (opacity < 1) setOpacity(opacity + 0.01);
+    }
   })
 
   useEffect(() => {
-    if (playRef.current) renderOnTop(playRef.current)
-    if (slideLeftRef.current) renderOnTop(slideLeftRef.current)
-    if (slideRightRef.current) renderOnTop(slideRightRef.current)
-    if (volumeSliderRef.current) renderOnTop(volumeSliderRef.current)
-    if (muteRef.current) renderOnTop(muteRef.current)
-    if (externalLinkRef.current) renderOnTop(externalLinkRef.current)
-  }, [playRef, slideLeftRef, slideRightRef, volumeSliderRef, muteRef, externalLinkRef])
+    if (playRef.current) renderOnTop(playRef.current, opacity)
+    if (slideLeftRef.current) renderOnTop(slideLeftRef.current, opacity)
+    if (slideRightRef.current) renderOnTop(slideRightRef.current, opacity)
+    if (volumeSliderRef.current) renderOnTop(volumeSliderRef.current, opacity)
+    if (muteRef.current) renderOnTop(muteRef.current, opacity)
+    if (externalLinkRef.current) renderOnTop(externalLinkRef.current, opacity)
+
+    buttonRefs.current.forEach((buttonRef, index) => {
+      if (buttonRef) renderOnTop(buttonRef, opacity);
+    });
+  }, [playRef, slideLeftRef, slideRightRef, volumeSliderRef, muteRef, externalLinkRef, buttonRefs, opacity])
 
   const playRadio = () => {
     if (isPlaying) {
@@ -79,32 +115,70 @@ const PlayerControls3D = ({
     play();
   }
 
+  const handleButtonClick = (buttonIndex) => {
+
+    const isPressed = pressed[buttonIndex];
+    const newPressedState = [...pressed];
+    newPressedState[buttonIndex] = !isPressed;
+    setPressed(newPressedState);
+
+    if (buttonIndex === 0) {
+      setIsVisibleStars(!isPressed);
+    }
+
+    const audio = new Audio(isPressed ? buttonPullSound : buttonPushSound);
+    audio.volume = 0.2;
+    audio.play();
+
+    document.getElementsByTagName('canvas')[0].style.cursor = 'pointer';
+
+    // // Simulate the "press" by returning to normal after a short delay
+    // setTimeout(() => {
+    //   const resetPressedState = [...newPressedState];
+    //   resetPressedState[buttonIndex] = false;
+    //   setPressed(resetPressedState);
+    // }, 200); // 200ms to simulate button press time
+  };
+
   return (
     <group> {/* Adjust position as needed */}
       {/* Main control buttons */}
-      <group>
+      <Selection>
+        <EffectComposer multisampling={8} autoClear={false}>
+          <Outline blur visibleEdgeColor="white" edgeStrength={5000} width={3000} />
+        </EffectComposer>
         <Button3D
           size={[0.015, 0.015, 0.015]}
           onClick={slideLeft}
           reference={slideLeftRef}
-          disabled={Object.keys(info).length === 0}
+          disabled={Object.keys(info).length === 0 || stations.length === 1}
+          opacity={opacity}
         >
         </Button3D>
         <Button3D
           size={[0.015, 0.015, 0.015]}
           onClick={playRadio}
           reference={playRef}
-          disabled={Object.keys(info).length === 0}
+          disabled={Object.keys(info).length === 0 || loading}
+          opacity={opacity}
+          isSwitch
         >
         </Button3D>
         <Button3D
           size={[0.015, 0.015, 0.015]}
           onClick={slideRight}
           reference={slideRightRef}
-          disabled={Object.keys(info).length === 0}
+          disabled={Object.keys(info).length === 0 || stations.length === 1}
+          opacity={opacity}
         >
         </Button3D>
-      </group>
+        {/* Cylinder Buttons */}
+        {
+          buttonColors.map((color, index) => (
+            <Button key={index} color={color} onClick={() => handleButtonClick(index)} refInstance={(el) => (buttonRefs.current[index] = el)} />
+          ))
+        }
+      </Selection>
 
       {/* Volume controls */}
       {/* <group position={[0, -0.5, 0]}>
@@ -129,8 +203,33 @@ const PlayerControls3D = ({
         icon="↗"
         ref={externalLinkRef}
       /> */}
+
     </group>
   )
 }
 
 export default PlayerControls3D;
+
+function Button({ color, onClick, refInstance }) {
+  const [hovered, hover] = useState(null)
+
+  const changeCursor = (type) => {
+    document.getElementsByTagName('canvas')[0].style.cursor = type;
+  }
+
+  return (
+    <Select enabled={hovered}>
+      <mesh
+        onClick={onClick}
+        onPointerEnter={() => changeCursor('pointer')}
+        onPointerLeave={() => changeCursor('grab')}
+        onPointerOver={() => hover(true)}
+        onPointerOut={() => hover(false)}
+        ref={refInstance}
+      >
+        <cylinderGeometry args={[0.01, 0.01, 0.02, 32]} />
+        <meshPhongMaterial color={color} />
+      </mesh>
+    </Select>
+  );
+}
