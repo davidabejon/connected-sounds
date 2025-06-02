@@ -54,7 +54,7 @@ function Map3D({ setPlaceID, setCountry, showInfo, setRadiosFetched, pointColor,
   const [isGrid, setIsGrid] = useState(false);
 
   useEffect(() => {
-    if (!startAnimation) setMinZoom(2.3);
+    if (!startAnimation) setMinZoom(2.35);
   }, [startAnimation])
 
   useEffect(() => {

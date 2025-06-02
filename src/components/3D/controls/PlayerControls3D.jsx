@@ -7,6 +7,7 @@ import { useFrame, useThree } from "@react-three/fiber"
 import { Selection, EffectComposer, Outline, Select } from '@react-three/postprocessing'
 import buttonPushSound from '../../../assets/sounds/button_push.wav';
 import buttonPullSound from '../../../assets/sounds/button_pull.wav';
+import { useTexture } from "@react-three/drei"
 const buttonColors = ['orange', 'red', 'blue', 'green'];
 
 const PlayerControls3D = ({
@@ -36,6 +37,16 @@ const PlayerControls3D = ({
 
   const buttonRefs = useRef([]);
   const [pressed, setPressed] = useState([false, false, false, false]);
+
+  const [pauseTexture, playTexture] = useTexture([
+    'textures/pause.png',
+    'textures/play.png',
+  ]);
+
+  const playButtonIcons = {
+    pressed: pauseTexture,
+    default: playTexture,
+  }
 
   useEffect(() => {
     if (loading) {
@@ -162,6 +173,7 @@ const PlayerControls3D = ({
           disabled={Object.keys(info).length === 0 || loading}
           opacity={opacity}
           isSwitch
+          icons={playButtonIcons}
         >
         </Button3D>
         <Button3D

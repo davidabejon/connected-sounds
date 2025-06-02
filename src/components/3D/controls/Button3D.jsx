@@ -1,11 +1,15 @@
+import { useTexture } from "@react-three/drei";
 import { Select } from "@react-three/postprocessing";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useMemo } from "react";
+import * as THREE from "three";
 
-// 3D Button Component
-const Button3D = ({ size = [1, 0.2, 1], onClick, children, disabled = false, reference, opacity, isSwitch = false }) => {
+const Button3D = ({ size = [1, 0.2, 1], onClick, disabled = false, reference, opacity, isSwitch = false, icons }) => {
+  const [plainBlue] = useTexture([
+    'textures/plain_blue.png'
+  ]);
 
   const [pressed, setPressed] = useState(false);
-  const [hovered, hover] = useState(null)
+  const [hovered, hover] = useState(null);
 
   const changeCursor = (type) => {
     if (!disabled)
@@ -14,19 +18,17 @@ const Button3D = ({ size = [1, 0.2, 1], onClick, children, disabled = false, ref
 
   const handleClick = () => {
     if (!disabled) {
-      onClick()
+      onClick();
       setPressed(!pressed);
       if (isSwitch) {
         if (pressed) {
           reference.current.scale.set(1, 1, 1);
           reference.current.translateY(0.02);
-        }
-        else {
+        } else {
           reference.current.scale.set(1, 0.5, 1);
           reference.current.translateY(-0.02);
         }
-      }
-      else {
+      } else {
         reference.current.scale.set(1, 0.5, 1);
         reference.current.translateY(-0.02);
         setTimeout(() => {
@@ -39,12 +41,52 @@ const Button3D = ({ size = [1, 0.2, 1], onClick, children, disabled = false, ref
 
   useEffect(() => {
     if (disabled) {
-      // set the button to not pressed and reset scale
       setPressed(false);
       reference.current.scale.set(1, 1, 1);
       reference.current.translateY(0.02);
     }
   }, [disabled]);
+
+  const materials = useMemo(() => {
+    const baseColor = disabled ? '#666666' : '#1e88e5';
+    const emissive = disabled ? '#333333' : '#0d47a1';
+
+    const flatMaterial = new THREE.MeshStandardMaterial({
+      map: plainBlue,
+      color: baseColor,
+      emissive: emissive,
+      emissiveIntensity: 0.2,
+      transparent: true,
+    });
+
+    if (!icons) {
+      return [
+      flatMaterial,      // right
+      flatMaterial,      // left
+      flatMaterial,      // top
+      flatMaterial,      // bottom
+      flatMaterial,      // front
+      flatMaterial       // back
+    ];
+    }
+
+    const texturedMaterial = new THREE.MeshStandardMaterial({
+      map: pressed ? icons.pressed : icons.default,
+      color: baseColor,
+      emissive: emissive,
+      emissiveIntensity: 0.2,
+      transparent: true,
+    });
+
+    return [
+      flatMaterial,      // right
+      flatMaterial,      // left
+      texturedMaterial,  // top
+      flatMaterial,      // bottom
+      flatMaterial,      // front
+      flatMaterial       // back
+    ];
+  }, [pressed, icons, disabled]);
 
   return (
     <Select enabled={hovered && !disabled}>
@@ -56,17 +98,12 @@ const Button3D = ({ size = [1, 0.2, 1], onClick, children, disabled = false, ref
         onPointerLeave={() => changeCursor('grab')}
         onPointerOver={() => hover(true)}
         onPointerOut={() => hover(false)}
+        material={materials}
       >
         <boxGeometry args={size} />
-        <meshStandardMaterial
-          color={disabled ? '#666666' : '#1e88e5'}
-          emissive={disabled ? '#333333' : '#0d47a1'}
-          emissiveIntensity={0.2}
-          opacity={opacity}
-        />
       </mesh>
     </Select>
-  )
+  );
 }
 
 export default Button3D;
