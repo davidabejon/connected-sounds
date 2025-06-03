@@ -8,7 +8,7 @@ import p2sFont from '../../assets/fonts/PressStart2P-Regular.ttf';
 import FakeGlowMaterial from './FakeGlowMaterial';
 import PlayerControls3D from './controls/PlayerControls3D';
 
-function Player3D({ info, stations, country, slideRight, slideLeft, handleLoading, errorMessage, color, setIsPlaying, isPlaying, startAnimation }) {
+function Player3D({ info, stations, country, slideRight, slideLeft, handleLoading, errorMessage, color, setIsPlaying, isPlaying, startAnimation, setIsVisibleStars }) {
 
   const audioRef = useRef(new Audio());
   const [muted, setMuted] = useState(false)
@@ -150,6 +150,7 @@ function Player3D({ info, stations, country, slideRight, slideLeft, handleLoadin
         isPlaying={isPlaying}
         setIsPlaying={setIsPlaying}
         startAnimation={startAnimation}
+        setIsVisibleStars={setIsVisibleStars}
       />
     </>
     // <div className='player'>

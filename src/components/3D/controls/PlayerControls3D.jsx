@@ -1,7 +1,5 @@
 import { useEffect, useRef, useState } from "react"
 import Button3D from "./Button3D"
-import IconButton3D from "./Icon3D"
-import VolumeSlider3D from "./VolumeSlider"
 import { followCamera, renderOnTop } from "../../../utilities"
 import { useFrame, useThree } from "@react-three/fiber"
 import { Selection, EffectComposer, Outline, Select } from '@react-three/postprocessing'
@@ -25,6 +23,7 @@ const PlayerControls3D = ({
   isPlaying,
   setIsPlaying,
   startAnimation,
+  setIsVisibleStars
 }) => {
   const playRef = useRef()
   const slideLeftRef = useRef()
@@ -38,14 +37,27 @@ const PlayerControls3D = ({
   const buttonRefs = useRef([]);
   const [pressed, setPressed] = useState([false, false, false, false]);
 
-  const [pauseTexture, playTexture] = useTexture([
+  const [pauseTexture, playTexture, nextTexture, previousTexure] = useTexture([
     'textures/pause.png',
     'textures/play.png',
+    'textures/next.png',
+    'textures/previous.png',
   ]);
 
   const playButtonIcons = {
     pressed: pauseTexture,
     default: playTexture,
+  }
+
+  const volumeIcons = {
+    next: {
+      pressed: nextTexture,
+      default: nextTexture,
+    },
+    previous: {
+      pressed: previousTexure,
+      default: previousTexure,
+    }
   }
 
   useEffect(() => {
@@ -164,6 +176,7 @@ const PlayerControls3D = ({
           reference={slideLeftRef}
           disabled={Object.keys(info).length === 0 || stations.length === 1}
           opacity={opacity}
+          icons={volumeIcons.previous}
         >
         </Button3D>
         <Button3D
@@ -182,6 +195,7 @@ const PlayerControls3D = ({
           reference={slideRightRef}
           disabled={Object.keys(info).length === 0 || stations.length === 1}
           opacity={opacity}
+          icons={volumeIcons.next}
         >
         </Button3D>
         {/* Cylinder Buttons */}
@@ -193,20 +207,14 @@ const PlayerControls3D = ({
       </Selection>
 
       {/* Volume controls */}
-      {/* <group position={[0, -0.5, 0]}>
-        <VolumeSlider3D
-          value={volumeValue}
-          onChange={volumeChange}
-          position={[-1.5, 0, 0]}
-        />
+      {/* TODO */}
 
-        <IconButton3D
+      {/* <IconButton3D
           position={[1.8, 0, 0]}
           onClick={mute}
           icon={mutedText === "Mute" && volumeValue != 0 ?
             (volumeValue < 0.3 ? "🔈" : volumeValue < 0.6 ? "🔉" : "🔊") : "🔇"}
-        />
-      </group> */}
+        /> */}
 
       {/* External link button */}
       {/* <IconButton3D

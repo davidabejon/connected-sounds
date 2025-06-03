@@ -71,7 +71,6 @@ function App3D({ setPlaceID, setCountry, setIsModalOpen, activeStation, activeSt
           />
           <Spaceship
             startAnimation={startAnimation}
-            setIsVisibleStars={setIsVisibleStars}
             setPointColor={setPointColor}
           />
           <Player3D
@@ -86,6 +85,7 @@ function App3D({ setPlaceID, setCountry, setIsModalOpen, activeStation, activeSt
             setIsPlaying={setIsPlaying}
             isPlaying={isPlaying}
             startAnimation={startAnimation}
+            setIsVisibleStars={setIsVisibleStars}
           />
         </Suspense>
       </Canvas>
