@@ -61,13 +61,13 @@ const Button3D = ({ size = [1, 0.2, 1], onClick, disabled = false, reference, op
 
     if (!icons) {
       return [
-      flatMaterial,      // right
-      flatMaterial,      // left
-      flatMaterial,      // top
-      flatMaterial,      // bottom
-      flatMaterial,      // front
-      flatMaterial       // back
-    ];
+        flatMaterial,      // right
+        flatMaterial,      // left
+        flatMaterial,      // top
+        flatMaterial,      // bottom
+        flatMaterial,      // front
+        flatMaterial       // back
+      ];
     }
 
     const texturedMaterial = new THREE.MeshStandardMaterial({

@@ -229,17 +229,15 @@ const ScrollingText = ({ text, country, place, speed = 0.02, width = 3, color = 
     }
   });
 
-  const statusText = failedToLoad ? 'Failed:' : loading ? 'Loading:' : isPlaying ? 'Now playing:' : 'Paused:'
-
   return (
     refs.map((ref, index) => (
       <React.Fragment key={index}>
         <Text ref={ref.textRef} fontSize={0.06} color={failedToLoad ? 'red' : color} font={p2sFont} fillOpacity={opacity}>
-          {`${statusText} ${text}`}
+          {`${text}`}
           <FakeGlowMaterial glowSharpness={100} falloff={.01} glowColor={failedToLoad ? 'red' : color} />
         </Text>
         <Text ref={ref.cloneRef} fontSize={0.06} color={failedToLoad ? 'red' : color} font={p2sFont} fillOpacity={opacity}>
-          {`${statusText} ${text}`}
+          {`${text}`}
           <FakeGlowMaterial glowSharpness={100} falloff={.005} glowColor={failedToLoad ? 'red' : color} />
         </Text>
         <Text ref={ref.subtitleRef} fontSize={0.03} color={failedToLoad ? 'red' : color} font={p2sFont} fillOpacity={opacity}>
