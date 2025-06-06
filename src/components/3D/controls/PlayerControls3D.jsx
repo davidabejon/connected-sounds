@@ -28,7 +28,8 @@ const PlayerControls3D = ({
   const playRef = useRef()
   const slideLeftRef = useRef()
   const slideRightRef = useRef()
-  const volumeSliderRef = useRef()
+  const volumeUpRef = useRef()
+  const volumeDownRef = useRef()
   const muteRef = useRef()
   const externalLinkRef = useRef()
   const [disablePlay, setDisablePlay] = useState(true)
@@ -37,19 +38,21 @@ const PlayerControls3D = ({
   const buttonRefs = useRef([]);
   const [pressed, setPressed] = useState([false, false, false, false]);
 
-  const [pauseTexture, playTexture, nextTexture, previousTexure] = useTexture([
+  const [pauseTexture, playTexture, nextTexture, previousTexure, volumeUpTexture, volumeDownTexture, muteTexture] = useTexture([
     'textures/pause.png',
     'textures/play.png',
     'textures/next.png',
     'textures/previous.png',
+    'textures/volumeup.png',
+    'textures/volumedown.png',
+    'textures/mute.png'
   ]);
 
   const playButtonIcons = {
     pressed: pauseTexture,
     default: playTexture,
   }
-
-  const volumeIcons = {
+  const slideIcons = {
     next: {
       pressed: nextTexture,
       default: nextTexture,
@@ -57,6 +60,20 @@ const PlayerControls3D = ({
     previous: {
       pressed: previousTexure,
       default: previousTexure,
+    }
+  }
+  const volumeIcons = {
+    up: {
+      pressed: volumeUpTexture,
+      default: volumeUpTexture,
+    },
+    down: {
+      pressed: volumeDownTexture,
+      default: volumeDownTexture,
+    },
+    mute: {
+      pressed: muteTexture,
+      default: muteTexture,
     }
   }
 
@@ -94,6 +111,33 @@ const PlayerControls3D = ({
       slideRightRef.current.rotateY(0.6);
       slideRightRef.current.rotateZ(0.3);
     }
+    if (volumeUpRef.current) {
+      followCamera(volumeUpRef.current, camera)
+      volumeUpRef.current.translateZ(-0.3);
+      volumeUpRef.current.translateY(-0.205);
+      volumeUpRef.current.translateX(0.09);
+      volumeUpRef.current.rotateX(.5);
+      volumeUpRef.current.rotateY(0.6);
+      volumeUpRef.current.rotateZ(0.3);
+    }
+    if (volumeDownRef.current) {
+      followCamera(volumeDownRef.current, camera)
+      volumeDownRef.current.translateZ(-0.3);
+      volumeDownRef.current.translateY(-0.205);
+      volumeDownRef.current.translateX(0.13);
+      volumeDownRef.current.rotateX(.5);
+      volumeDownRef.current.rotateY(0.6);
+      volumeDownRef.current.rotateZ(0.3);
+    }
+    if (muteRef.current) {
+      followCamera(muteRef.current, camera)
+      muteRef.current.translateZ(-0.3);
+      muteRef.current.translateY(-0.205);
+      muteRef.current.translateX(0.17);
+      muteRef.current.rotateX(.5);
+      muteRef.current.rotateY(0.6);
+      muteRef.current.rotateZ(0.3);
+    }
 
     buttonRefs.current.forEach((buttonRef, index) => {
       if (buttonRef) {
@@ -122,14 +166,15 @@ const PlayerControls3D = ({
     if (playRef.current) renderOnTop(playRef.current, opacity)
     if (slideLeftRef.current) renderOnTop(slideLeftRef.current, opacity)
     if (slideRightRef.current) renderOnTop(slideRightRef.current, opacity)
-    if (volumeSliderRef.current) renderOnTop(volumeSliderRef.current, opacity)
+    if (volumeUpRef.current) renderOnTop(volumeUpRef.current, opacity)
+    if (volumeDownRef.current) renderOnTop(volumeDownRef.current, opacity)
     if (muteRef.current) renderOnTop(muteRef.current, opacity)
     if (externalLinkRef.current) renderOnTop(externalLinkRef.current, opacity)
 
-    buttonRefs.current.forEach((buttonRef, index) => {
+    buttonRefs.current.forEach((buttonRef) => {
       if (buttonRef) renderOnTop(buttonRef, opacity);
     });
-  }, [playRef, slideLeftRef, slideRightRef, volumeSliderRef, muteRef, externalLinkRef, buttonRefs, opacity])
+  }, [playRef, slideLeftRef, slideRightRef, volumeUpRef, volumeDownRef, muteRef, externalLinkRef, buttonRefs, opacity])
 
   const playRadio = () => {
     if (isPlaying) {
@@ -139,7 +184,6 @@ const PlayerControls3D = ({
   }
 
   const handleButtonClick = (buttonIndex) => {
-
     const isPressed = pressed[buttonIndex];
     const newPressedState = [...pressed];
     newPressedState[buttonIndex] = !isPressed;
@@ -154,29 +198,39 @@ const PlayerControls3D = ({
     audio.play();
 
     document.getElementsByTagName('canvas')[0].style.cursor = 'pointer';
-
-    // // Simulate the "press" by returning to normal after a short delay
-    // setTimeout(() => {
-    //   const resetPressedState = [...newPressedState];
-    //   resetPressedState[buttonIndex] = false;
-    //   setPressed(resetPressedState);
-    // }, 200); // 200ms to simulate button press time
   };
 
+  const volumeUp = () => {
+    if (volumeValue < 1) {
+      const newVolume = Math.min(1, volumeValue + 0.1);
+      volumeChange(Number(newVolume.toFixed(1)));
+    }
+  }
+  const volumeDown = () => {
+    if (volumeValue > 0) {
+      const newVolume = Math.max(0, volumeValue - 0.1);
+      volumeChange(Number(newVolume.toFixed(1)));
+    }
+  }
+
+  useEffect(() => {
+    console.log('Volume changed:', volumeValue);
+  }, [volumeValue])
+
   return (
-    <group> {/* Adjust position as needed */}
-      {/* Main control buttons */}
+    <group>
       <Selection>
         <EffectComposer multisampling={8} autoClear={false}>
           <Outline blur visibleEdgeColor="white" edgeStrength={5000} width={3000} />
         </EffectComposer>
+
         <Button3D
           size={[0.015, 0.015, 0.015]}
           onClick={slideLeft}
           reference={slideLeftRef}
           disabled={Object.keys(info).length === 0 || stations.length === 1}
           opacity={opacity}
-          icons={volumeIcons.previous}
+          icons={slideIcons.previous}
         >
         </Button3D>
         <Button3D
@@ -195,7 +249,7 @@ const PlayerControls3D = ({
           reference={slideRightRef}
           disabled={Object.keys(info).length === 0 || stations.length === 1}
           opacity={opacity}
-          icons={volumeIcons.next}
+          icons={slideIcons.next}
         >
         </Button3D>
         {/* Cylinder Buttons */}
@@ -204,17 +258,38 @@ const PlayerControls3D = ({
             <Button key={index} color={color} onClick={() => handleButtonClick(index)} refInstance={(el) => (buttonRefs.current[index] = el)} />
           ))
         }
-      </Selection>
 
-      {/* Volume controls */}
-      {/* TODO */}
-
-      {/* <IconButton3D
-          position={[1.8, 0, 0]}
+        {/* Volume controls */}
+        {/* TODO */}
+        <Button3D
+          size={[0.015, 0.015, 0.015]}
+          onClick={volumeUp}
+          reference={volumeUpRef}
+          opacity={opacity}
+          icons={volumeIcons.up}
+          disabled={Object.keys(info).length === 0 || volumeValue >= 1}
+        >
+        </Button3D>
+        <Button3D
+          size={[0.015, 0.015, 0.015]}
+          onClick={volumeDown}
+          reference={volumeDownRef}
+          opacity={opacity}
+          icons={volumeIcons.down}
+          disabled={Object.keys(info).length === 0 || volumeValue <= 0}
+        >
+        </Button3D>
+        <Button3D
+          size={[0.015, 0.015, 0.015]}
           onClick={mute}
-          icon={mutedText === "Mute" && volumeValue != 0 ?
-            (volumeValue < 0.3 ? "🔈" : volumeValue < 0.6 ? "🔉" : "🔊") : "🔇"}
-        /> */}
+          reference={muteRef}
+          opacity={opacity}
+          icons={volumeIcons.mute}
+          disabled={Object.keys(info).length === 0}
+        >
+        </Button3D>
+
+      </Selection>
 
       {/* External link button */}
       {/* <IconButton3D

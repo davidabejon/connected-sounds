@@ -93,9 +93,6 @@ function Player3D({ info, stations, country, slideRight, slideLeft, handleLoadin
     }
   }
 
-  const volumeChange = (e) => {
-    setVolumeValue(e.target.value / 100)
-  }
   const mute = () => {
     if (muted) {
       setMutedText('Mute');
@@ -142,7 +139,7 @@ function Player3D({ info, stations, country, slideRight, slideLeft, handleLoadin
         slideLeft={slideLeft}
         slideRight={slideRight}
         stations={stations}
-        volumeChange={volumeChange}
+        volumeChange={setVolumeValue}
         volumeValue={volumeValue}
         mute={mute}
         mutedText={mutedText}
