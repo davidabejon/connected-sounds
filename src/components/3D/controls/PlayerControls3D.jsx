@@ -23,7 +23,10 @@ const PlayerControls3D = ({
   isPlaying,
   setIsPlaying,
   startAnimation,
-  setIsVisibleStars
+  setIsVisibleStars,
+  setIsPixelation,
+  setIsScanline,
+  setIsEarthVisible
 }) => {
   const playRef = useRef()
   const slideLeftRef = useRef()
@@ -191,6 +194,15 @@ const PlayerControls3D = ({
 
     if (buttonIndex === 0) {
       setIsVisibleStars(!isPressed);
+    }
+    else if (buttonIndex === 1) {
+      setIsPixelation(!isPressed);
+    }
+    else if (buttonIndex === 2) {
+      setIsEarthVisible(isPressed);
+    }
+    else if (buttonIndex === 3) {
+      setIsScanline(!isPressed);
     }
 
     const audio = new Audio(isPressed ? buttonPullSound : buttonPushSound);

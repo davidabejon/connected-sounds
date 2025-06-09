@@ -10,6 +10,7 @@ import { message } from "antd";
 import { Loader } from "@react-three/drei";
 import { useNavigate } from "react-router";
 import { isDevicePowerfulEnough, oldPath } from "../utilities";
+import { EffectComposer, Pixelation, Scanline } from "@react-three/postprocessing";
 
 function App3D({ setPlaceID, setCountry, setIsModalOpen, activeStation, activeStations, country, slideLeftActiveStation, slideRightActiveStation, mode }) {
   const navigate = useNavigate();
@@ -34,6 +35,9 @@ function App3D({ setPlaceID, setCountry, setIsModalOpen, activeStation, activeSt
   const [isVisibleStars, setIsVisibleStars] = useState(false)
   const [startAnimation, setStartAnimation] = useState(true)
   const [isPlaying, setIsPlaying] = useState(false)
+  const [isPixelation, setIsPixelation] = useState(false);
+  const [isScanline, setIsScanline] = useState(false);
+  const [isEarthVisible, setIsEarthVisible] = useState(true);
 
   useEffect(() => {
     document.getElementById('crosshair').style.borderColor = pointColor
@@ -68,6 +72,7 @@ function App3D({ setPlaceID, setCountry, setIsModalOpen, activeStation, activeSt
             isVisibleStars={isVisibleStars}
             startAnimation={startAnimation}
             setStartAnimation={setStartAnimation}
+            isEarthVisible={isEarthVisible}
           />
           <Spaceship
             startAnimation={startAnimation}
@@ -86,7 +91,14 @@ function App3D({ setPlaceID, setCountry, setIsModalOpen, activeStation, activeSt
             isPlaying={isPlaying}
             startAnimation={startAnimation}
             setIsVisibleStars={setIsVisibleStars}
+            setIsPixelation={setIsPixelation}
+            setIsScanline={setIsScanline}
+            setIsEarthVisible={setIsEarthVisible}
           />
+          <EffectComposer>
+            {isPixelation && <Pixelation granularity={3} />}
+            {isScanline && <Scanline density={2} />}
+          </EffectComposer>
         </Suspense>
       </Canvas>
       <Loader />

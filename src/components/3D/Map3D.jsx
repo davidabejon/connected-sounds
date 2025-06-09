@@ -10,7 +10,7 @@ const earth_detail = 48;
 const rotationAngleX = Math.PI - 0.0023;
 const rotationAngleZ = -0.001;
 
-function Map3D({ setPlaceID, setCountry, showInfo, setRadiosFetched, pointColor, isVisibleStars, startAnimation, setStartAnimation }) {
+function Map3D({ setPlaceID, setCountry, showInfo, setRadiosFetched, pointColor, isVisibleStars, startAnimation, setStartAnimation, isEarthVisible }) {
 
   const defaultColor = new THREE.Color(pointColor);
   const clickedColor = new THREE.Color(pointColor).multiplyScalar(8);
@@ -44,14 +44,6 @@ function Map3D({ setPlaceID, setCountry, showInfo, setRadiosFetched, pointColor,
   const [materialOpacity, setMaterialOpacity] = useState(0);
   const [materialOpacityClouds, setMaterialOpacityClouds] = useState(0);
   const [ambientLightIntensity, setAmbientLightIntensity] = useState(3);
-
-  const [isNoise, setIsNoise] = useState(false);
-  const [isGlitch, setIsGlitch] = useState(false);
-  const [isPixelation, setIsPixelation] = useState(false);
-  const [isColorAverage, setIsColorAverage] = useState(false);
-  const [isDotScreen, setIsDotScreen] = useState(false);
-  const [isScanline, setIsScanline] = useState(false);
-  const [isGrid, setIsGrid] = useState(false);
 
   useEffect(() => {
     if (!startAnimation) setMinZoom(2.35);
@@ -243,7 +235,14 @@ function Map3D({ setPlaceID, setCountry, showInfo, setRadiosFetched, pointColor,
   return (
     <>
       {/* Tierra */}
-      <mesh rotation={[0, rotationAngleX, rotationAngleZ]} name='earthMesh' onPointerDown={handleMouseDown} onPointerMove={handleMouseMove} onPointerUp={handleMouseUp}>
+      <mesh
+        rotation={[0, rotationAngleX, rotationAngleZ]}
+        name='earthMesh'
+        onPointerDown={handleMouseDown}
+        onPointerMove={handleMouseMove}
+        onPointerUp={handleMouseUp}
+        visible={isEarthVisible}
+      >
         <sphereGeometry args={[radius, earth_detail, earth_detail]} />
         <meshStandardMaterial transparent map={daymap} bumpMap={bump} bumpScale={100} opacity={materialOpacity} />
       </mesh>
@@ -274,17 +273,6 @@ function Map3D({ setPlaceID, setCountry, showInfo, setRadiosFetched, pointColor,
           <pointsMaterial size={pointScale} vertexColors />
         </points>
       )}
-
-      {/* Efectos de brillo */}
-      <EffectComposer>
-        {isNoise && <Noise opacity={0.1} />}
-        {isGlitch && <Glitch delay={[1, 1]} duration={[0.1, 0.5]} strength={[0.3, 0.6]} active ratio={0.85} />}
-        {isPixelation && <Pixelation granularity={5} />}
-        {isColorAverage && <ColorAverage />}
-        {isDotScreen && <DotScreen angle={Math.PI * 0.5} scale={1.0} />}
-        {isScanline && <Scanline density={2} />}
-        {isGrid && <Grid scale={1.0} lineWidth={0.0} />}
-      </EffectComposer>
 
       {/* Luz */}
       <ambientLight intensity={ambientLightIntensity} />
