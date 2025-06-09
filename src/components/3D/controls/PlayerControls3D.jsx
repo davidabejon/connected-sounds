@@ -218,88 +218,77 @@ const PlayerControls3D = ({
   }, [volumeValue])
 
   return (
-    <group>
-      <Selection>
-        <EffectComposer multisampling={8} autoClear={false}>
-          <Outline blur visibleEdgeColor="white" edgeStrength={5000} width={3000} />
-        </EffectComposer>
+    <Selection>
+      <EffectComposer multisampling={8} autoClear={false}>
+        <Outline blur visibleEdgeColor="white" edgeStrength={5000} width={3000} />
+      </EffectComposer>
 
-        <Button3D
-          size={[0.015, 0.015, 0.015]}
-          onClick={slideLeft}
-          reference={slideLeftRef}
-          disabled={Object.keys(info).length === 0 || stations.length === 1}
-          opacity={opacity}
-          icons={slideIcons.previous}
-        >
-        </Button3D>
-        <Button3D
-          size={[0.015, 0.015, 0.015]}
-          onClick={playRadio}
-          reference={playRef}
-          disabled={Object.keys(info).length === 0 || loading}
-          opacity={opacity}
-          isSwitch
-          icons={playButtonIcons}
-        >
-        </Button3D>
-        <Button3D
-          size={[0.015, 0.015, 0.015]}
-          onClick={slideRight}
-          reference={slideRightRef}
-          disabled={Object.keys(info).length === 0 || stations.length === 1}
-          opacity={opacity}
-          icons={slideIcons.next}
-        >
-        </Button3D>
-        {/* Cylinder Buttons */}
-        {
-          buttonColors.map((color, index) => (
-            <Button key={index} color={color} onClick={() => handleButtonClick(index)} refInstance={(el) => (buttonRefs.current[index] = el)} />
-          ))
-        }
+      <Button3D
+        size={[0.015, 0.015, 0.015]}
+        onClick={slideLeft}
+        reference={slideLeftRef}
+        disabled={Object.keys(info).length === 0 || stations.length === 1}
+        opacity={opacity}
+        icons={slideIcons.previous}
+      >
+      </Button3D>
+      <Button3D
+        size={[0.015, 0.015, 0.015]}
+        onClick={playRadio}
+        reference={playRef}
+        disabled={Object.keys(info).length === 0 || loading}
+        opacity={opacity}
+        isSwitch
+        icons={playButtonIcons}
+      >
+      </Button3D>
+      <Button3D
+        size={[0.015, 0.015, 0.015]}
+        onClick={slideRight}
+        reference={slideRightRef}
+        disabled={Object.keys(info).length === 0 || stations.length === 1}
+        opacity={opacity}
+        icons={slideIcons.next}
+      >
+      </Button3D>
+      {/* Cylinder Buttons */}
+      {
+        buttonColors.map((color, index) => (
+          <Button key={index} color={color} onClick={() => handleButtonClick(index)} refInstance={(el) => (buttonRefs.current[index] = el)} />
+        ))
+      }
 
-        {/* Volume controls */}
-        {/* TODO */}
-        <Button3D
-          size={[0.015, 0.015, 0.015]}
-          onClick={volumeUp}
-          reference={volumeUpRef}
-          opacity={opacity}
-          icons={volumeIcons.up}
-          disabled={Object.keys(info).length === 0 || volumeValue >= 1}
-        >
-        </Button3D>
-        <Button3D
-          size={[0.015, 0.015, 0.015]}
-          onClick={volumeDown}
-          reference={volumeDownRef}
-          opacity={opacity}
-          icons={volumeIcons.down}
-          disabled={Object.keys(info).length === 0 || volumeValue <= 0}
-        >
-        </Button3D>
-        <Button3D
-          size={[0.015, 0.015, 0.015]}
-          onClick={mute}
-          reference={muteRef}
-          opacity={opacity}
-          icons={volumeIcons.mute}
-          disabled={Object.keys(info).length === 0}
-        >
-        </Button3D>
+      {/* Volume controls */}
+      {/* TODO */}
+      <Button3D
+        size={[0.015, 0.015, 0.015]}
+        onClick={volumeUp}
+        reference={volumeUpRef}
+        opacity={opacity}
+        icons={volumeIcons.up}
+        disabled={Object.keys(info).length === 0 || volumeValue >= 1}
+      >
+      </Button3D>
+      <Button3D
+        size={[0.015, 0.015, 0.015]}
+        onClick={volumeDown}
+        reference={volumeDownRef}
+        opacity={opacity}
+        icons={volumeIcons.down}
+        disabled={Object.keys(info).length === 0 || volumeValue <= 0}
+      >
+      </Button3D>
+      <Button3D
+        size={[0.015, 0.015, 0.015]}
+        onClick={mute}
+        reference={muteRef}
+        opacity={opacity}
+        icons={volumeIcons.mute}
+        disabled={Object.keys(info).length === 0}
+      >
+      </Button3D>
 
-      </Selection>
-
-      {/* External link button */}
-      {/* <IconButton3D
-        position={[2.5, -0.5, 0]}
-        onClick={() => window.open(`https://${info.stream}`, '_blank')}
-        icon="↗"
-        ref={externalLinkRef}
-      /> */}
-
-    </group>
+    </Selection>
   )
 }
 
