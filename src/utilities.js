@@ -65,6 +65,7 @@ export async function isDevicePowerfulEnough() {
   const start = performance.now();
   let frames = 0;
   const seconds = 5;
+  const MIN_FPS = 15;
 
   return new Promise((resolve) => {
     function frame() {
@@ -74,7 +75,7 @@ export async function isDevicePowerfulEnough() {
         requestAnimationFrame(frame);
       } else {
         console.log(`FPS: ${frames / seconds}`);
-        resolve(frames / seconds > 20);
+        resolve(frames / seconds > MIN_FPS);
       }
     }
     requestAnimationFrame(frame);

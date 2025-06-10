@@ -18,7 +18,7 @@ function App3D({ setPlaceID, setCountry, setIsModalOpen, activeStation, activeSt
     if (mode === '2D') navigate(oldPath)
     isDevicePowerfulEnough().then((isPowerful) => {
       if (!isPowerful) {
-        errorMessage('Your device is not powerful enough to run this application. Please try again on a more powerful device.');
+        window.alert('Your device is not powerful enough to run this application. Please try again on a more powerful device. We have redirected you to the 2D version.');
         navigate(oldPath);
       }
     })
