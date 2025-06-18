@@ -9,19 +9,19 @@ import Player3D from "../components/3D/Player3D";
 import { message } from "antd";
 import { Loader } from "@react-three/drei";
 import { useNavigate } from "react-router";
-import { isDevicePowerfulEnough, oldPath } from "../utilities";
+import { isDeviceMobile, isDevicePowerfulEnough, oldPath } from "../utilities";
 import { EffectComposer, Pixelation, Scanline } from "@react-three/postprocessing";
 
 function App3D({ setPlaceID, setCountry, setIsModalOpen, activeStation, activeStations, country, slideLeftActiveStation, slideRightActiveStation, mode }) {
   const navigate = useNavigate();
   useEffect(() => {
-    if (mode === '2D') navigate(oldPath)
-    isDevicePowerfulEnough().then((isPowerful) => {
-      if (!isPowerful) {
-        window.alert('Your device is not powerful enough to run this application. Please try again on a more powerful device. We have redirected you to the 2D version.');
-        navigate(oldPath);
-      }
-    })
+    if (isDeviceMobile() || mode === '2D') navigate(oldPath)
+    // isDevicePowerfulEnough().then((isPowerful) => {
+    //   if (!isPowerful) {
+    //     window.alert('Your device is not powerful enough to run this application. Please try again on a more powerful device. We have redirected you to the 2D version.');
+    //     navigate(oldPath);
+    //   }
+    // })
   }, [mode])
 
   const [messageApi, contextHolder] = message.useMessage();

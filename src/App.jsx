@@ -5,7 +5,7 @@ import App2D from './views/App2D'
 import App3D from './views/App3D'
 import { BrowserRouter, Route, Routes } from 'react-router-dom';
 import Redirect from './components/Redirect'
-import { newPath, oldPath } from './utilities'
+import { isDeviceMobile, newPath, oldPath } from './utilities'
 import Welcome from './components/Welcome'
 
 function App() {
@@ -124,7 +124,7 @@ function App() {
       </div>
       <BrowserRouter>
         <Routes>
-          <Route path="*" element={<Redirect to={newPath} />} />
+          <Route path="*" element={<Redirect to={isDeviceMobile() ? oldPath : newPath} />} />
           <Route path={newPath} element={
             <App3D
               setPlaceID={setPlaceID}

@@ -81,3 +81,7 @@ export async function isDevicePowerfulEnough() {
     requestAnimationFrame(frame);
   });
 }
+
+export const isDeviceMobile = () => {
+  return /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+}
