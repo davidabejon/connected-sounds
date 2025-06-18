@@ -119,9 +119,12 @@ function App() {
   return (
     <div className='app'>
       <Welcome setIsModalOpen={setIsModalOpen} isModalOpen={isModalOpen} />
-      <div className='mode'>
-        <Switch onChange={changeMode} checkedChildren="3D" unCheckedChildren="2D" value={mode == '3D'} />
-      </div>
+      {
+        !isDeviceMobile() &&
+        <div className='mode'>
+          <Switch onChange={changeMode} checkedChildren="3D" unCheckedChildren="2D" value={mode == '3D'} />
+        </div>
+      }
       <BrowserRouter>
         <Routes>
           <Route path="*" element={<Redirect to={isDeviceMobile() ? oldPath : newPath} />} />
